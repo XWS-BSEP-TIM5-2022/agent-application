@@ -13,4 +13,6 @@ public interface UserService {
     List<UserDTO> getAll();
 
     UserDTO findByUsername(String name);
+
+    boolean checkPasswordCriteria(String password, String username);
 }

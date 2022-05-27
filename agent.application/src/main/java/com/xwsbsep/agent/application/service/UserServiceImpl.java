@@ -23,6 +23,7 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
     private final int TOKEN_EXPIRES_MINUTES = 15;
+    private final int MIN_PASSWORD_LENGTH = 8;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -84,5 +85,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO findByUsername(String username) {
         return new UserMapper().mapUserToUserDto(userRepository.findByUsername(username));
+    }
+
+    @Override
+    public boolean checkPasswordCriteria(String password, String username) {
+        String pattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{" + MIN_PASSWORD_LENGTH + ",}$";
+        if (!password.matches(pattern))
+            return password.matches(pattern);
+        if (password.toLowerCase().contains(username.toLowerCase())) {
+            return false;
+        }
+        return true;
     }
 }
