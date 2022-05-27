@@ -38,7 +38,7 @@ public class AuthController {
     @RequestMapping(method = RequestMethod.GET, value = "/activateAccount")
     public ResponseEntity<Object> activateAccount(@RequestParam("token")String verificationToken) {
         if(userService.verifyUserAccount(verificationToken)) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>("Account is activated, you can login now", HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
