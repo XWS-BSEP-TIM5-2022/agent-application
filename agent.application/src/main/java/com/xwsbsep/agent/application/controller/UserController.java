@@ -21,8 +21,7 @@ public class UserController {
     @RequestMapping(method = RequestMethod.GET, value = "/getAll")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAll(Principal user){
-        System.out.println(user.getName());
-        User user1 = userService.findByUsername(user.getName());
+//        User user1 = userService.findByUsername(user.getName());
         return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
     }
 

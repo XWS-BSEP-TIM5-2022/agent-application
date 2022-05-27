@@ -12,5 +12,5 @@ public interface UserService {
 
     List<UserDTO> getAll();
 
-    User findByUsername(String name);
+    UserDTO findByUsername(String name);
 }
