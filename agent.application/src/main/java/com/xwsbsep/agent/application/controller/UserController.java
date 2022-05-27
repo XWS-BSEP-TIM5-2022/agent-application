@@ -1,5 +1,6 @@
 package com.xwsbsep.agent.application.controller;
 
+import com.xwsbsep.agent.application.model.User;
 import com.xwsbsep.agent.application.service.intereface.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAll(Principal user){
         System.out.println(user.getName());
+        User user1 = userService.findByUsername(user.getName());
         return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
     }
 

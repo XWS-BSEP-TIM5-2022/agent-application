@@ -11,4 +11,6 @@ public interface UserService {
     boolean verifyUserAccount(String verificationToken);
 
     List<UserDTO> getAll();
+
+    User findByUsername(String name);
 }
