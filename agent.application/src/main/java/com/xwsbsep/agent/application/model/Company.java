@@ -32,6 +32,8 @@ public class Company {
     @OneToMany(mappedBy="company") //fetch = FetchType.EAGER
     private Set<JobOffer> jobOffers;
 
+    private boolean isActive;
+
     //@OneToOne(mappedBy = "company")
     //@JoinColumn(name = "user_id", referencedColumnName = "id")
     //private User user;

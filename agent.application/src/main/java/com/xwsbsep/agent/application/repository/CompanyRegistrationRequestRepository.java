@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CompanyRegistrationRequestRepository extends JpaRepository<CompanyRegistrationRequest, Long> {
-
+    CompanyRegistrationRequest findCompanyRegistrationRequestById(Long id);
 }

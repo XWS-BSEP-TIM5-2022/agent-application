@@ -1,5 +1,6 @@
 package com.xwsbsep.agent.application.controller;
 
+import com.xwsbsep.agent.application.dto.ApproveRequestDTO;
 import com.xwsbsep.agent.application.dto.CompanyRegistrationRequestDTO;
 import com.xwsbsep.agent.application.dto.UserDTO;
 import com.xwsbsep.agent.application.model.CompanyRegistrationRequest;
@@ -27,14 +28,16 @@ public class CompanyController {
         return new ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @RequestMapping(method = RequestMethod.PUT, value = "/approve_request")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> approveRequest(@RequestParam("id")Long id) {
+    @RequestMapping(method = RequestMethod.POST, value = "/approve_request")
+    //@PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> approveRequest(@RequestBody ApproveRequestDTO dto) {
+        CompanyRegistrationRequestDTO request = this.companyRegistrationRequestService.approveRequest(dto);
+        if (request != null){
+            return new ResponseEntity(request, HttpStatus.OK);
+        }
 
-        // admin potvrdi zahtev
-        // korisnik dobija rolu - ROLE_COMPANY_OWNER
+        // user menja rolu
 
-        return null;
-//        return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
+        return new ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
