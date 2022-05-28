@@ -31,4 +31,15 @@ public class CompanyMapper {
 
         return companyDTO;
     }
+
+    public Company mapCompanyDtoToCompany(CompanyDTO dto) {
+        Company company = new Company();
+        company.setId(dto.getId());
+        company.setName(dto.getName());
+        company.setDescription(dto.getDescription());
+        company.setPhoneNumber(dto.getPhoneNumber());
+        company.setActive(dto.isActive());
+        // TODO: job offers
+        return company;
+    }
 }

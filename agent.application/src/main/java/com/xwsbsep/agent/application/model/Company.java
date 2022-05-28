@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -33,6 +35,9 @@ public class Company {
     private Set<JobOffer> jobOffers;
 
     private boolean isActive;
+
+    //    @OneToOne(mappedBy="company")
+    //    private User owner;
 
     // TODO: komentari, plate, ocene, proces selekcije kandidata
 }

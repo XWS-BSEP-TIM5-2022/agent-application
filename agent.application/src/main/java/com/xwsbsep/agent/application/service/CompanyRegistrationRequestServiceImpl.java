@@ -1,13 +1,12 @@
 package com.xwsbsep.agent.application.service;
 
-import com.xwsbsep.agent.application.dto.ApproveRequestDTO;
 import com.xwsbsep.agent.application.dto.CompanyRegistrationRequestDTO;
+import com.xwsbsep.agent.application.mapper.CompanyMapper;
 import com.xwsbsep.agent.application.mapper.CompanyRegistrationRequestMapper;
 import com.xwsbsep.agent.application.model.Company;
 import com.xwsbsep.agent.application.model.CompanyRegistrationRequest;
 import com.xwsbsep.agent.application.model.User;
 import com.xwsbsep.agent.application.repository.CompanyRegistrationRequestRepository;
-import com.xwsbsep.agent.application.repository.CompanyRepository;
 import com.xwsbsep.agent.application.repository.UserRepository;
 import com.xwsbsep.agent.application.service.intereface.CompanyRegistrationRequestService;
 import com.xwsbsep.agent.application.service.intereface.UserTypeService;
@@ -27,13 +26,15 @@ public class CompanyRegistrationRequestServiceImpl implements CompanyRegistratio
     private CompanyRegistrationRequestRepository registrationRequestRepository;
 
     @Override
-    public boolean saveRegistrationRequest(CompanyRegistrationRequest request) {
-        User user = this.userRepository.findUserById(request.getUserId());
-        if (user != null) {
-            request.getCompany().setActive(false);
-            user.setCompany(request.getCompany());
-            request.setApproved(false);
-            this.registrationRequestRepository.save(request);
+    public boolean saveRegistrationRequest(CompanyRegistrationRequestDTO dto) {
+        User user = this.userRepository.findUserById(dto.getUserId());
+        if (user != null && user.getCompany() == null) {
+            dto.getCompanyDTO().setActive(false);
+            dto.setApproved(false);
+            CompanyRegistrationRequest savedRequest = this.save(new CompanyRegistrationRequestMapper().mapRequestDtoToRequest(dto));
+            user.setCompany(savedRequest.getCompany());
+            this.userRepository.save(user);
+
             return true;
         }
         return false;
@@ -62,6 +63,11 @@ public class CompanyRegistrationRequestServiceImpl implements CompanyRegistratio
             return true;
         }
         return false;
+    }
+
+    @Override
+    public CompanyRegistrationRequest save(CompanyRegistrationRequest request) {
+        return this.registrationRequestRepository.save(request);
     }
 
     public void updateRole(String role, Long userId){

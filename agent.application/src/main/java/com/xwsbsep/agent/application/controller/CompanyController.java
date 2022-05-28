@@ -1,6 +1,5 @@
 package com.xwsbsep.agent.application.controller;
 
-import com.xwsbsep.agent.application.dto.ApproveRequestDTO;
 import com.xwsbsep.agent.application.dto.CompanyRegistrationRequestDTO;
 import com.xwsbsep.agent.application.dto.JobOfferDTO;
 import com.xwsbsep.agent.application.model.CompanyRegistrationRequest;
@@ -23,8 +22,8 @@ public class CompanyController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/request_registration")
     //@PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> saveRegistrationRequest(@RequestBody CompanyRegistrationRequest request) {
-        boolean saved = this.companyRegistrationRequestService.saveRegistrationRequest(request);
+    public ResponseEntity<?> saveRegistrationRequest(@RequestBody CompanyRegistrationRequestDTO dto) {
+        boolean saved = this.companyRegistrationRequestService.saveRegistrationRequest(dto);
         if (saved){
             return new ResponseEntity(HttpStatus.CREATED);
         }

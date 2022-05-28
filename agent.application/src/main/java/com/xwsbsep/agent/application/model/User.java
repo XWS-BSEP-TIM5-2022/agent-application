@@ -52,11 +52,10 @@ public class User implements UserDetails {
     @JoinColumn(name = "role_id")
     private UserType userType = new UserType();
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(/*cascade = CascadeType.ALL*/)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     private Company company;
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
