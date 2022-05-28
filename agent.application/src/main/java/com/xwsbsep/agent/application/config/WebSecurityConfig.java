@@ -78,6 +78,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers(HttpMethod.POST, "/**/company/**");
         web.ignoring().antMatchers(HttpMethod.PUT, "/**/company/**");
         web.ignoring().antMatchers(HttpMethod.GET, "/**/company/**");
+        // TODO SD: obrisati
+        web.ignoring().antMatchers(HttpMethod.POST, "/**/comments/**");
+        web.ignoring().antMatchers(HttpMethod.PUT, "/**/comments/**");
+        web.ignoring().antMatchers(HttpMethod.GET, "/**/comments/**");
 
         web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "favicon.ico", "/**/*.html",
                 "/**/*.css", "/**/*.js");

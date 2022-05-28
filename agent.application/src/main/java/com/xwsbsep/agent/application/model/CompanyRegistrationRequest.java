@@ -25,5 +25,6 @@ public class CompanyRegistrationRequest {
     private Company company;
 
     private Long userId;
+
     private boolean isApproved;
 }

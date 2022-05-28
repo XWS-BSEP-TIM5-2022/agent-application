@@ -1,9 +1,11 @@
 package com.xwsbsep.agent.application.controller;
 
+import com.xwsbsep.agent.application.dto.CommentDTO;
 import com.xwsbsep.agent.application.dto.CompanyRegistrationRequestDTO;
 import com.xwsbsep.agent.application.dto.JobOfferDTO;
-import com.xwsbsep.agent.application.model.CompanyRegistrationRequest;
+import com.xwsbsep.agent.application.model.Comment;
 import com.xwsbsep.agent.application.service.intereface.CompanyRegistrationRequestService;
+import com.xwsbsep.agent.application.service.intereface.CommentService;
 import com.xwsbsep.agent.application.service.intereface.JobOfferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,7 @@ public class CompanyController {
 
     @Autowired
     private JobOfferService jobOfferService;
+
 
     @RequestMapping(method = RequestMethod.POST, value = "/request_registration")
     //@PreAuthorize("hasRole('USER')")
@@ -60,4 +63,6 @@ public class CompanyController {
         }
         return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
 }
