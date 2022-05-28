@@ -2,42 +2,63 @@ package com.xwsbsep.agent.application.controller;
 
 import com.xwsbsep.agent.application.dto.ApproveRequestDTO;
 import com.xwsbsep.agent.application.dto.CompanyRegistrationRequestDTO;
-import com.xwsbsep.agent.application.dto.UserDTO;
+import com.xwsbsep.agent.application.dto.JobOfferDTO;
 import com.xwsbsep.agent.application.model.CompanyRegistrationRequest;
-import com.xwsbsep.agent.application.model.User;
 import com.xwsbsep.agent.application.service.intereface.CompanyRegistrationRequestService;
+import com.xwsbsep.agent.application.service.intereface.JobOfferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/company")
+@RequestMapping(value = "/api/company")
 public class CompanyController {
+
     @Autowired
     private CompanyRegistrationRequestService companyRegistrationRequestService;
 
+    @Autowired
+    private JobOfferService jobOfferService;
+
     @RequestMapping(method = RequestMethod.POST, value = "/request_registration")
     //@PreAuthorize("hasRole('USER')")
-    public ResponseEntity<CompanyRegistrationRequestDTO> save(@RequestBody CompanyRegistrationRequest request) {
-        CompanyRegistrationRequestDTO dto = this.companyRegistrationRequestService.save(request);
-        if (dto != null){
-            return new ResponseEntity(dto, HttpStatus.CREATED);
+    public ResponseEntity<?> saveRegistrationRequest(@RequestBody CompanyRegistrationRequest request) {
+        boolean saved = this.companyRegistrationRequestService.saveRegistrationRequest(request);
+        if (saved){
+            return new ResponseEntity(HttpStatus.CREATED);
         }
-        return new ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/approve_request")
+    @RequestMapping(method = RequestMethod.PUT, value = "/approve_request/{requestId}")
     //@PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> approveRequest(@RequestBody ApproveRequestDTO dto) {
-        CompanyRegistrationRequestDTO request = this.companyRegistrationRequestService.approveRequest(dto);
-        if (request != null){
-            return new ResponseEntity(request, HttpStatus.OK);
+    public ResponseEntity<?> approveRequest(@PathVariable Long requestId) {
+        boolean approved = this.companyRegistrationRequestService.approveRequest(requestId);
+        if (approved){
+            return new ResponseEntity(HttpStatus.OK);
         }
+        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
-        // user menja rolu
+    @RequestMapping(method = RequestMethod.PUT, value = "/reject_request/{requestId}")
+    //@PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> rejectRequest(@PathVariable Long requestId) {
+        boolean rejected = this.companyRegistrationRequestService.rejectRequest(requestId);
+        if (rejected){
+            return new ResponseEntity(HttpStatus.OK);
+        }
+        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
-        return new ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    @RequestMapping(method = RequestMethod.POST, value = "/{companyId}/job_offer")
+    //@PreAuthorize("hasRole('COMPANY_OWNER')")
+    public ResponseEntity<?> saveJobOffer(@RequestBody JobOfferDTO dto, @PathVariable Long companyId) {
+        dto.setCompanyId(companyId);
+        boolean saved = this.jobOfferService.saveJobOffer(dto);
+        if (saved != false){
+            return new ResponseEntity(HttpStatus.CREATED);
+        }
+        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -3,12 +3,12 @@ package com.xwsbsep.agent.application.service;
 import com.xwsbsep.agent.application.dto.ApproveRequestDTO;
 import com.xwsbsep.agent.application.dto.CompanyRegistrationRequestDTO;
 import com.xwsbsep.agent.application.mapper.CompanyRegistrationRequestMapper;
+import com.xwsbsep.agent.application.model.Company;
 import com.xwsbsep.agent.application.model.CompanyRegistrationRequest;
 import com.xwsbsep.agent.application.model.User;
-import com.xwsbsep.agent.application.model.UserType;
 import com.xwsbsep.agent.application.repository.CompanyRegistrationRequestRepository;
+import com.xwsbsep.agent.application.repository.CompanyRepository;
 import com.xwsbsep.agent.application.repository.UserRepository;
-import com.xwsbsep.agent.application.repository.UserTypeRepository;
 import com.xwsbsep.agent.application.service.intereface.CompanyRegistrationRequestService;
 import com.xwsbsep.agent.application.service.intereface.UserTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,25 +27,41 @@ public class CompanyRegistrationRequestServiceImpl implements CompanyRegistratio
     private CompanyRegistrationRequestRepository registrationRequestRepository;
 
     @Override
-    public CompanyRegistrationRequestDTO save(CompanyRegistrationRequest request) {
+    public boolean saveRegistrationRequest(CompanyRegistrationRequest request) {
         User user = this.userRepository.findUserById(request.getUserId());
-        request.getCompany().setActive(false);
-        user.setCompany(request.getCompany());
-        request.setApproved(false);
-        this.registrationRequestRepository.save(request);
-        return new CompanyRegistrationRequestMapper().mapRequestToRequestDto(request);
+        if (user != null) {
+            request.getCompany().setActive(false);
+            user.setCompany(request.getCompany());
+            request.setApproved(false);
+            this.registrationRequestRepository.save(request);
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public CompanyRegistrationRequestDTO approveRequest(ApproveRequestDTO dto) {
-        CompanyRegistrationRequest request = this.registrationRequestRepository.findCompanyRegistrationRequestById(dto.getId());
-        request.setApproved(dto.isApproved());
-        request.getCompany().setActive(dto.isApproved());
-        if (dto.isApproved()) {
+    public boolean approveRequest(Long requestId) {
+        CompanyRegistrationRequest request = this.registrationRequestRepository.findCompanyRegistrationRequestById(requestId);
+        if (request != null) {
+            request.setApproved(true);
+            request.getCompany().setActive(true);
             updateRole("ROLE_COMPANY_OWNER", request.getUserId());
+            this.registrationRequestRepository.save(request);
+            return true;
         }
-        this.registrationRequestRepository.save(request); // TODO ??
-        return new CompanyRegistrationRequestMapper().mapRequestToRequestDto(request);
+        return false;
+    }
+
+    @Override
+    public boolean rejectRequest(Long requestId) {
+        CompanyRegistrationRequest request = this.registrationRequestRepository.findCompanyRegistrationRequestById(requestId);
+        if (request != null && !request.isApproved()) {
+            request.setApproved(false);
+            request.getCompany().setActive(false);
+            this.registrationRequestRepository.save(request);
+            return true;
+        }
+        return false;
     }
 
     public void updateRole(String role, Long userId){

@@ -10,9 +10,7 @@ public class CompanyRegistrationRequestMapper {
         CompanyRegistrationRequestDTO dto = new CompanyRegistrationRequestDTO();
         dto.setApproved(request.isApproved());
         dto.setId(request.getId());
-
-        CompanyDTO companyDTO = new CompanyDTO(request.getCompany().getId(), request.getCompany().getName(),
-                request.getCompany().getDescription(), request.getCompany().getPhoneNumber(), request.getCompany().isActive());
+        CompanyDTO companyDTO = new CompanyMapper().mapCompanyToCompanyDto(request.getCompany());
         dto.setCompanyDTO(companyDTO);
         dto.setUserId(request.getUserId());
         return dto;

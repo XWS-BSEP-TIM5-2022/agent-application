@@ -5,6 +5,7 @@ import com.xwsbsep.agent.application.dto.CompanyRegistrationRequestDTO;
 import com.xwsbsep.agent.application.model.CompanyRegistrationRequest;
 
 public interface CompanyRegistrationRequestService {
-    CompanyRegistrationRequestDTO save(CompanyRegistrationRequest request);
-    CompanyRegistrationRequestDTO approveRequest(ApproveRequestDTO dto);
+    boolean saveRegistrationRequest(CompanyRegistrationRequest request);  // TODO: sa fronta dolazi DTO ??
+    boolean approveRequest(Long requestId);
+    boolean rejectRequest(Long requestId);
 }

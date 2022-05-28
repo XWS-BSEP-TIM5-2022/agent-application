@@ -34,10 +34,5 @@ public class Company {
 
     private boolean isActive;
 
-    //@OneToOne(mappedBy = "company")
-    //@JoinColumn(name = "user_id", referencedColumnName = "id")
-    //private User user;
-
-//    @OneToOne(mappedBy = "company")
-//    private CompanyRegistrationRequest request;
+    // TODO: komentari, plate, ocene, proces selekcije kandidata
 }

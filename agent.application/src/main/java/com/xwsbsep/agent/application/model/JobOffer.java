@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -19,11 +21,16 @@ public class JobOffer {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    // TODO: dodati
-    // pozicija
-    // plata
-
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JoinColumn(name = "company_id")
     private Company company;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "position_id", referencedColumnName = "id")
+    private Position position;
+
+    private String jobDescription;
+    private String dailyActivities;
+    private String preconditions;
 }

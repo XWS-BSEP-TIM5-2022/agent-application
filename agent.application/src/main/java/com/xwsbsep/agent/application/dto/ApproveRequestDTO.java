@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ApproveRequestDTO {
-    private Long id;
+    private Long id;    // id request-a
     private boolean approved;
 }

@@ -15,7 +15,5 @@ public class CompanyDTO {
     private String description;
     private String phoneNumber;
     private boolean isActive;
-    //private Set<JobOffer> jobOffers;
-    //private UserDTO userDTO;
-    //private CompanyRegistrationRequest request;
+    //private Set<JobOfferDTO> jobOffers;
 }
