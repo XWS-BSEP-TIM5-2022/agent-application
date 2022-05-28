@@ -24,6 +24,8 @@ public class VerificationToken {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
+    private String role;
+
     public VerificationToken() {
         super();
     }
@@ -33,6 +35,7 @@ public class VerificationToken {
         this.token = UUID.randomUUID().toString();;
         this.createdDate = new Date();
         this.user = user;
+        this.role = user.getUserType().getName();
     }
 
     public Long getId() {
@@ -66,6 +69,10 @@ public class VerificationToken {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public String getRole() { return role; }
+
+    public void setRole(String role) { this.role = role; }
 
     private Date calculateExpiryDate(int expiryTimeInMinutes) {
         Calendar cal = Calendar.getInstance();

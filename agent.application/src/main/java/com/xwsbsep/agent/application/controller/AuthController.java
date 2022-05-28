@@ -39,9 +39,9 @@ public class AuthController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/activateAccount")
-    public ResponseEntity<Object> activateAccount(@RequestParam("token")String verificationToken) {
+    public ResponseEntity<?> activateAccount(@RequestParam("token")String verificationToken) {
         if(userService.verifyUserAccount(verificationToken)) {
-            return new ResponseEntity<>("Account is activated, you can login now", HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -61,7 +61,7 @@ public class AuthController {
         if (!user.isActivated()) {
             return new ResponseEntity("User is not activated", HttpStatus.BAD_REQUEST);
         }
-        String jwt = tokenUtils.generateToken(user.getUsername());
+        String jwt = tokenUtils.generateToken(user.getUsername(), user.getUserType().getName());
         int expiresIn = tokenUtils.getExpiredIn();
 
         return ResponseEntity.ok(new UserTokenStateDTO(jwt, expiresIn));

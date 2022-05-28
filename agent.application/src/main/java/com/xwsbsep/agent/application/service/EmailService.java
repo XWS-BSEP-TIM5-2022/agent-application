@@ -1,11 +1,9 @@
 package com.xwsbsep.agent.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -30,14 +28,14 @@ public class EmailService {
     }
 
 
-    public boolean sendAccountVerificationMail(String token, String emailTo) {
+    public boolean sendAccountActivationMail(String token, String emailTo) {
         try {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setSubject("Agent application - Account activation");
             helper.setFrom(env.getProperty("spring.mail.username"));
             helper.setTo(emailTo);
-            helper.setText(accountVerificationMessage(token), true);
+            helper.setText(accountActivationMessage(token), true);
             javaMailSender.send(message);
             return true;
         } catch (Exception e) {
@@ -46,9 +44,9 @@ public class EmailService {
         }
     }
 
-    public String accountVerificationMessage(String token) {
-        //mailMessage.setText("http://localhost:" + env.getProperty("frontend.port") + "/#/activateAccount?token=" + token + " \nTODO SD: mail message");
-        String url = "http://localhost:" + env.getProperty("server.port") + "/auth/activateAccount?token=" + token;
+    public String accountActivationMessage(String token) {
+        String url = "http://localhost:" + env.getProperty("frontend.port") + "/activate-account/" + token;
+//        String url = "http://localhost:" + env.getProperty("server.port") + "/auth/activateAccount?token=" + token;
         String message = "<html><body style=\"background-color: #f4f4f4; margin: 0 !important; padding: 0 !important;\">\n" +
                 "    <!-- HIDDEN PREHEADER TEXT -->\n" +
                 "    <div style=\"display: none; font-size: 1px; color: #fefefe; line-height: 1px; font-family: 'Lato', Helvetica, Arial, sans-serif; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden;\"> We're thrilled to have you here! Get ready to dive into your new account.\n" +
@@ -98,7 +96,7 @@ public class EmailService {
                 "                            </table>\n" +
                 "                        </td>\n" +
                 "                    </tr> \n" +
-                "    </table>\n" +
+                "           </table>\n" +
                 "    <br> <br>\n" +
                 "</body>" +
                 "</html>";
