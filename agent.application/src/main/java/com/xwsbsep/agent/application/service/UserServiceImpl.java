@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
         user.setCompany(null);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         VerificationToken verificationToken = new VerificationToken(user);
-        if(!emailService.sendAccountVerificationMail(verificationToken.getToken(), user.getEmail())){
+        if(!emailService.sendAccountActivationMail(verificationToken.getToken(), user.getEmail())){
             return null;
         }
         userRepository.save(user);
@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
             user.setActivated(true);
             userRepository.save(user);
             return true;
-        }else {
+        } else {
             userRepository.delete(user);
             verificationTokenRepository.delete(verificationToken);
             return false;
