@@ -4,8 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "companies")
@@ -22,4 +25,19 @@ public class Company {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "description", nullable = false)
+    private String description;
+
+    @Column(name = "phone_number", nullable = false)
+    private String phoneNumber;
+
+    @OneToMany(mappedBy="company") //fetch = FetchType.EAGER
+    private Set<JobOffer> jobOffers;
+
+    private boolean isActive;
+
+    //    @OneToOne(mappedBy="company")
+    //    private User owner;
+
+    // TODO: komentari, plate, ocene, proces selekcije kandidata
 }
