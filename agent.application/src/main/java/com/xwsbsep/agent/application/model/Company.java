@@ -8,6 +8,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 @Entity
@@ -23,12 +24,15 @@ public class Company {
     private Long id;
 
     @Column(name = "name", nullable = false)
+    @NotBlank(message = "Name of company is mandatory!")
     private String name;
 
     @Column(name = "description", nullable = false)
+    @NotBlank(message = "Description of company is mandatory!")
     private String description;
 
     @Column(name = "phone_number", nullable = false)
+    @NotBlank(message = "Phone number of company is mandatory!")
     private String phoneNumber;
 
     @OneToMany(mappedBy="company") //fetch = FetchType.EAGER
