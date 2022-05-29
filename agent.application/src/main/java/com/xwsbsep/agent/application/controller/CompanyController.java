@@ -2,16 +2,17 @@ package com.xwsbsep.agent.application.controller;
 
 import com.xwsbsep.agent.application.dto.CompanyRegistrationRequestDTO;
 import com.xwsbsep.agent.application.dto.JobOfferDTO;
-import com.xwsbsep.agent.application.model.CompanyRegistrationRequest;
 import com.xwsbsep.agent.application.service.intereface.CompanyRegistrationRequestService;
+import com.xwsbsep.agent.application.service.intereface.CompanyService;
 import com.xwsbsep.agent.application.service.intereface.JobOfferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/api/company")
+@RequestMapping(value = "/company")
 public class CompanyController {
 
     @Autowired
@@ -19,6 +20,9 @@ public class CompanyController {
 
     @Autowired
     private JobOfferService jobOfferService;
+
+    @Autowired
+    private CompanyService companyService;
 
     @RequestMapping(method = RequestMethod.POST, value = "/request_registration")
     //@PreAuthorize("hasRole('USER')")
@@ -59,5 +63,23 @@ public class CompanyController {
             return new ResponseEntity(HttpStatus.CREATED);
         }
         return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/job_offer")
+    //@PreAuthorize("hasRole('COMPANY_OWNER') or hasRole('ADMIN') or hasRole('USER')")
+    public ResponseEntity<?> getAllJobOffers() {
+        return new ResponseEntity(this.jobOfferService.getAll(), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}")
+    //@PreAuthorize("hasRole('COMPANY_OWNER') or hasRole('ADMIN') or hasRole('USER')")  // TODO: CHECK ?
+    public ResponseEntity<?> getCompanyById(@PathVariable Long id) {
+        return new ResponseEntity(this.companyService.findCompanyById(id), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/requests")
+    //@PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> getAllRequests() {
+        return new ResponseEntity(this.companyRegistrationRequestService.findAll(), HttpStatus.OK);
     }
 }
