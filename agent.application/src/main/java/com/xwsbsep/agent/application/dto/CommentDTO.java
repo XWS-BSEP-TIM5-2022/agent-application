@@ -10,5 +10,6 @@ public class CommentDTO {
     private String title;
     private String content;
     private Integer rating;
+    private String position;
     private CompanyDTO companyDTO;
 }

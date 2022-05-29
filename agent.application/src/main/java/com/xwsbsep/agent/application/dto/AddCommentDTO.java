@@ -10,5 +10,6 @@ public class AddCommentDTO {
     private String content;
     private Long companyId;
     private Integer rating;
+    private String position;
 }
 

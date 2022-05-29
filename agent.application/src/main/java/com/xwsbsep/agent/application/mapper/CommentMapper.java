@@ -12,6 +12,7 @@ public class CommentMapper {
         dto.setTitle(c.getTitle());
         dto.setContent(c.getContent());
         dto.setRating(c.getRating());
+        dto.setPosition(c.getPosition());
         if(c.getCompany() != null) {
             dto.setCompanyDTO(new CompanyMapper().mapCompanyToCompanyDto(c.getCompany()));
         }
@@ -22,6 +23,7 @@ public class CommentMapper {
         Comment c = new Comment();
         c.setTitle(dto.getTitle());
         c.setContent(dto.getContent());
+        c.setPosition(dto.getPosition());
         c.setRating(dto.getRating());
         return c;
     }

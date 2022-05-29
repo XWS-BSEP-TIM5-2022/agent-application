@@ -63,6 +63,9 @@ public class CommentServiceImpl implements CommentService {
     public List<String> getPositionsByCompanyId(Long companyId) {
         List<String> positionsName = new ArrayList<>();
         Company company = companyRepository.findCompanyById(companyId);
+        if(company == null || !company.isActive()) {
+            return null;
+        }
         for(JobOffer offer: company.getJobOffers()){
             positionsName.add(offer.getPosition().getName());
         }
