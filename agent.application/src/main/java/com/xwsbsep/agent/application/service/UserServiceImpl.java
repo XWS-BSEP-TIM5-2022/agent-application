@@ -1,6 +1,8 @@
 package com.xwsbsep.agent.application.service;
 
+import com.xwsbsep.agent.application.dto.CompanyDTO;
 import com.xwsbsep.agent.application.dto.UserDTO;
+import com.xwsbsep.agent.application.mapper.CompanyMapper;
 import com.xwsbsep.agent.application.mapper.UserMapper;
 import com.xwsbsep.agent.application.model.User;
 import com.xwsbsep.agent.application.model.VerificationToken;
@@ -96,5 +98,20 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public CompanyDTO getCompanyByOwnerUsername(String username) {
+        for (User user: this.userRepository.findAll()) {
+            if (user.getUsername().equals(username) && user.getCompany() != null){
+                return new CompanyMapper().mapCompanyToCompanyDto(user.getCompany());
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public UserDTO findById(Long id) {
+        return new UserMapper().mapUserToUserDto(this.userRepository.findUserById(id));
     }
 }
