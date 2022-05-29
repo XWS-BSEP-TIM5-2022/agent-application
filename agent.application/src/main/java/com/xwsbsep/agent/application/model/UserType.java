@@ -37,7 +37,6 @@ public class UserType implements GrantedAuthority {
     @JsonIgnore
     @Override
     public String getAuthority() {
-        // TODO Auto-generated method stub
         return name;
     }
 }

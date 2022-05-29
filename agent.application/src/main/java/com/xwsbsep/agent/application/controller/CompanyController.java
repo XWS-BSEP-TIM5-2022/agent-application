@@ -22,7 +22,6 @@ public class CompanyController {
     @Autowired
     private JobOfferService jobOfferService;
 
-
     @RequestMapping(method = RequestMethod.POST, value = "/request_registration")
     //@PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> saveRegistrationRequest(@RequestBody CompanyRegistrationRequestDTO dto) {
