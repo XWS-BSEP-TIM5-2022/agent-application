@@ -1,7 +1,11 @@
 package com.xwsbsep.agent.application.controller;
 
+import com.xwsbsep.agent.application.dto.CommentDTO;
 import com.xwsbsep.agent.application.dto.CompanyRegistrationRequestDTO;
 import com.xwsbsep.agent.application.dto.JobOfferDTO;
+import com.xwsbsep.agent.application.model.Comment;
+import com.xwsbsep.agent.application.service.intereface.CompanyRegistrationRequestService;
+import com.xwsbsep.agent.application.service.intereface.CommentService;
 import com.xwsbsep.agent.application.service.intereface.CompanyRegistrationRequestService;
 import com.xwsbsep.agent.application.service.intereface.CompanyService;
 import com.xwsbsep.agent.application.service.intereface.JobOfferService;

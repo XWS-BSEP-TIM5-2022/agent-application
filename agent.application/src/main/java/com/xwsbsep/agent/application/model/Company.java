@@ -36,8 +36,12 @@ public class Company {
 
     private boolean isActive;
 
-    //    @OneToOne(mappedBy="company")
-    //    private User owner;
+    @OneToMany(mappedBy="company")
+    private Set<Comment> comments;
 
-    // TODO: komentari, plate, ocene, proces selekcije kandidata
+    @OneToMany(mappedBy="company")
+    private Set<CommentSalary> commentSalaries;
+
+    @OneToMany(mappedBy="company")
+    private Set<CommentInterview> commentInterviews;
 }
