@@ -26,7 +26,7 @@ public class Comment {
     @Column(name="title", nullable = false, unique = true)
     private String title;
 
-    @Column(name="content", nullable = false)
+    @Column(name="content", nullable = false, columnDefinition = "text")
     private String content;
 
     @Column(name="rating", nullable = false)

@@ -29,10 +29,10 @@ public class CommentInterview {
     @Column(name="title", nullable = false, unique = true)
     private String title;
 
-    @Column(name="hr_interview", nullable = false)
+    @Column(name="hr_interview", nullable = false, columnDefinition = "text")
     private String hrInterview;
 
-    @Column(name="technical_interview", nullable = false)
+    @Column(name="technical_interview", nullable = false, columnDefinition = "text")
     private String technicalInterview;
 
     @Column(name="rating", nullable = false)
