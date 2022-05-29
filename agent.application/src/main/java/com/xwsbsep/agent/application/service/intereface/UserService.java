@@ -1,5 +1,6 @@
 package com.xwsbsep.agent.application.service.intereface;
 
+import com.xwsbsep.agent.application.dto.CompanyDTO;
 import com.xwsbsep.agent.application.dto.UserDTO;
 import com.xwsbsep.agent.application.model.User;
 
@@ -15,4 +16,8 @@ public interface UserService {
     UserDTO findByUsername(String name);
 
     boolean checkPasswordCriteria(String password, String username);
+
+    CompanyDTO getCompanyByOwnerUsername(String username);
+
+    UserDTO findById(Long id);
 }

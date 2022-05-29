@@ -13,6 +13,9 @@ import com.xwsbsep.agent.application.service.intereface.UserTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class CompanyRegistrationRequestServiceImpl implements CompanyRegistrationRequestService {
 
@@ -68,6 +71,15 @@ public class CompanyRegistrationRequestServiceImpl implements CompanyRegistratio
     @Override
     public CompanyRegistrationRequest save(CompanyRegistrationRequest request) {
         return this.registrationRequestRepository.save(request);
+    }
+
+    @Override
+    public List<CompanyRegistrationRequestDTO> findAll() {
+        List<CompanyRegistrationRequestDTO> dtos = new ArrayList<>();
+        for(CompanyRegistrationRequest c : this.registrationRequestRepository.findAll()){
+            dtos.add(new CompanyRegistrationRequestMapper().mapRequestToRequestDto(c));
+        }
+        return dtos;
     }
 
     public void updateRole(String role, Long userId){
