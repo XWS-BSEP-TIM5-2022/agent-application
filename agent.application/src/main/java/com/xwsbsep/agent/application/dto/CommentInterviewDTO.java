@@ -5,10 +5,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CommentDTO {
+public class CommentInterviewDTO {
     private Long id;
+    private String position;
     private String title;
-    private String content;
+    private String hrInterview;
+    private String technicalInterview;
     private Integer rating;
-    private CompanyDTO companyDTO;
+    private CompanyDTO company;
 }

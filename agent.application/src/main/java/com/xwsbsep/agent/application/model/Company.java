@@ -39,4 +39,9 @@ public class Company {
     @OneToMany(mappedBy="company")
     private Set<Comment> comments;
 
+    @OneToMany(mappedBy="company")
+    private Set<CommentSalary> commentSalaries;
+
+    @OneToMany(mappedBy="company")
+    private Set<CommentInterview> commentInterviews;
 }
