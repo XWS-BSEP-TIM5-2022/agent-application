@@ -13,6 +13,7 @@ public class CommentSalaryMapper {
         c.setFormerEmployee(dto.isFormerEmployee());
         c.setBonus(dto.isBonus());
         c.setFairPay(dto.isFairPay());
+        c.setFormerEmployee(dto.isFormerEmployee());
         return c;
     }
 
