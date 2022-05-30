@@ -10,6 +10,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,25 +30,31 @@ public class User implements UserDetails {
     private Long id;
 
     @Column(name="email", unique = true, nullable = false)
+    @NotBlank(message = "Email is required")
     private String email;
 
     @Column(name="username", unique = true, nullable = false)
+    @NotBlank(message = "Username is required")
     private String username;
 
     @Column(name="password", nullable = false)
+    @NotBlank(message = "Password is required")
     private String password;
 
     @Column(name="last_password_reset_date", nullable = false)
     private Timestamp lastPasswordResetDate;
 
     @Column(name="first_name", nullable = false)
+    @NotBlank(message = "First name is required")
     private String firstName;
 
     @Column(name="last_name", nullable = false)
+    @NotBlank(message = "Last name is required")
     private String lastName;
 
     @Column(name="is_activated", nullable = false)
-    private boolean isActivated;
+    @NotNull(message = "Is user activated is required")
+    private Boolean isActivated;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JoinColumn(name = "role_id")

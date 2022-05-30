@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name="roles")
@@ -15,6 +16,7 @@ public class UserType implements GrantedAuthority {
     Long id;
 
     @Column(name="name")
+    @NotBlank(message = "Role name is required")
     String name;
 
     @JsonIgnore

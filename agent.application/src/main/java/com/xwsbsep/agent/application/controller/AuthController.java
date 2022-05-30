@@ -27,17 +27,17 @@ public class AuthController {
     private TokenUtils tokenUtils;
 
     @RequestMapping(method = RequestMethod.POST, value = "/register")
-    public ResponseEntity<UserDTO> registerUser(@RequestBody User user) {
-        if(!userService.checkPasswordCriteria(user.getPassword(), user.getUsername())) {
-            return new ResponseEntity("Password must contain minimum eight characters, at least one uppercase " +
-                    "letter, one lowercase letter, one number and one special character",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<UserDTO> registerUser(@RequestBody User user) throws Exception {
+
+        try {
+            UserDTO userDTO = userService.registerUser(user);
+            if(userDTO == null) {
+                return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            return new ResponseEntity(userDTO, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        UserDTO userDTO = userService.registerUser(user);
-        if(userDTO == null) {
-            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity(userDTO, HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/activateAccount")
@@ -60,7 +60,7 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         User user = (User) authentication.getPrincipal();
-        if (!user.isActivated()) {
+        if (!user.getIsActivated()) {
             return new ResponseEntity("User is not activated", HttpStatus.BAD_REQUEST);
         }
         String jwt = tokenUtils.generateToken(user.getUsername(), user.getUserType().getName());

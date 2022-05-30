@@ -5,6 +5,7 @@ import com.xwsbsep.agent.application.dto.UserDTO;
 import com.xwsbsep.agent.application.mapper.CompanyMapper;
 import com.xwsbsep.agent.application.mapper.UserMapper;
 import com.xwsbsep.agent.application.model.User;
+import com.xwsbsep.agent.application.model.UserType;
 import com.xwsbsep.agent.application.model.VerificationToken;
 import com.xwsbsep.agent.application.repository.UserRepository;
 import com.xwsbsep.agent.application.repository.VerificationTokenRepository;
@@ -13,6 +14,8 @@ import com.xwsbsep.agent.application.service.intereface.UserService;
 import com.xwsbsep.agent.application.service.intereface.UserTypeService;
 import com.xwsbsep.agent.application.service.intereface.VerificationTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,18 +45,26 @@ public class UserServiceImpl implements UserService {
     private VerificationTokenRepository verificationTokenRepository;
 
     @Override
-    public UserDTO registerUser(User user) {
-        user.setUserType(userTypeService.findUserTypeByName("ROLE_USER"));
+    public UserDTO registerUser(User user) throws Exception {
+        if(!checkPasswordCriteria(user.getPassword(), user.getUsername())) {
+            throw  new Exception("Password must contain minimum eight characters, at least one uppercase " +
+                    "letter, one lowercase letter, one number and one special character");
+        }
+        UserType role = userTypeService.findUserTypeByName("ROLE_USER");
+        if(role == null) {
+            throw new Exception("Role does not exist");
+        }
+        user.setUserType(role);
         user.setLastPasswordResetDate(Timestamp.from(Instant.now()));
-        user.setActivated(false);
+        user.setIsActivated(false);
         user.setCompany(null);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         VerificationToken verificationToken = new VerificationToken(user);
+        if(!emailService.sendAccountActivationMail(verificationToken.getToken(), user.getEmail())){
+            throw new Exception("Email for account verification not sent, try again");
+        }
         userRepository.save(user);
         verificationTokenService.saveVerificationToken(verificationToken);
-        if(!emailService.sendAccountActivationMail(verificationToken.getToken(), user.getEmail())){
-            return null;
-        }
         User registeredUser = userRepository.findByEmail(user.getEmail());
         return new UserMapper().mapUserToUserDto(registeredUser);
     }
@@ -65,7 +76,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(verificationToken.getUser().getEmail());;
         long difference_In_Minutes = (difference_In_Time / (1000 * 60)) % 60;
         if(difference_In_Minutes <= TOKEN_EXPIRES_MINUTES) {
-            user.setActivated(true);
+            user.setIsActivated(true);
             userRepository.save(user);
             return true;
         } else {
