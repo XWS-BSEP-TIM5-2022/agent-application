@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean checkPasswordCriteria(String password, String username) {
-        String pattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{" + MIN_PASSWORD_LENGTH + ",}$";
+        String pattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])(?=\\S+$).{" + MIN_PASSWORD_LENGTH + ",}$";
         if (!password.matches(pattern))
             return password.matches(pattern);
         if (password.toLowerCase().contains(username.toLowerCase())) {

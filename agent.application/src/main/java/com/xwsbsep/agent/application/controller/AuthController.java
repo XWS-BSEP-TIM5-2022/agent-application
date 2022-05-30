@@ -29,7 +29,9 @@ public class AuthController {
     @RequestMapping(method = RequestMethod.POST, value = "/register")
     public ResponseEntity<UserDTO> registerUser(@RequestBody User user) {
         if(!userService.checkPasswordCriteria(user.getPassword(), user.getUsername())) {
-            return new ResponseEntity("Password must contain minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character" , HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity("Password must contain minimum eight characters, at least one uppercase " +
+                    "letter, one lowercase letter, one number and one special character",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
         UserDTO userDTO = userService.registerUser(user);
         if(userDTO == null) {
