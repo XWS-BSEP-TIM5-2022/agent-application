@@ -49,11 +49,11 @@ public class UserServiceImpl implements UserService {
         user.setCompany(null);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         VerificationToken verificationToken = new VerificationToken(user);
+        userRepository.save(user);
+        verificationTokenService.saveVerificationToken(verificationToken);
         if(!emailService.sendAccountActivationMail(verificationToken.getToken(), user.getEmail())){
             return null;
         }
-        userRepository.save(user);
-        verificationTokenService.saveVerificationToken(verificationToken);
         User registeredUser = userRepository.findByEmail(user.getEmail());
         return new UserMapper().mapUserToUserDto(registeredUser);
     }
