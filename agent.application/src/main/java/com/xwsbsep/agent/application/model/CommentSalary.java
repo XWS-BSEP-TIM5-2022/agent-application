@@ -36,14 +36,13 @@ public class CommentSalary {
 
     @Column(name="is_former_employee", nullable = false)
     @NotNull(message = "CommentSalary isFormerEmployee is required")
-    private boolean isFormerEmployee;  // bivsi ili trenutni zaposleni
+    private Boolean isFormerEmployee;  // bivsi ili trenutni zaposleni
 
     @Column(name="bonus", nullable = false)
     @NotNull(message = "CommentSalary bonus is required")
-    private boolean bonus;
+    private Boolean bonus;
 
     @Column(name="fair_pay", nullable = false)
     @NotNull(message = "CommentSalary fairPay is required")
-    private boolean fairPay;
-
+    private Boolean fairPay;
 }

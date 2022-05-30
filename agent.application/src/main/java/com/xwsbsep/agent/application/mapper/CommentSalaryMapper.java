@@ -10,10 +10,9 @@ public class CommentSalaryMapper {
         CommentSalary c = new CommentSalary();
         c.setPosition(dto.getPosition());
         c.setPay(dto.getPay());
-        c.setFormerEmployee(dto.isFormerEmployee());
-        c.setBonus(dto.isBonus());
-        c.setFairPay(dto.isFairPay());
-        c.setFormerEmployee(dto.isFormerEmployee());
+        c.setIsFormerEmployee(dto.getIsFormerEmployee());
+        c.setBonus(dto.getBonus());
+        c.setFairPay(dto.getFairPay());
         return c;
     }
 
@@ -22,9 +21,9 @@ public class CommentSalaryMapper {
         c.setId(comment.getId());
         c.setPosition(comment.getPosition());
         c.setPay(comment.getPay());
-        c.setFormerEmployee(comment.isFormerEmployee());
-        c.setBonus(comment.isBonus());
-        c.setFairPay(comment.isFairPay());
+        c.setFormerEmployee(comment.getIsFormerEmployee());
+        c.setBonus(comment.getBonus());
+        c.setFairPay(comment.getFairPay());
         c.setCompanyDTO(new CompanyMapper().mapCompanyToCompanyDto(comment.getCompany()));
         return c;
     }
