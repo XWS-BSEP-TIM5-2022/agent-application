@@ -1,9 +1,7 @@
 package com.xwsbsep.agent.application.service;
 
 import com.xwsbsep.agent.application.dto.CompanyRegistrationRequestDTO;
-import com.xwsbsep.agent.application.mapper.CompanyMapper;
 import com.xwsbsep.agent.application.mapper.CompanyRegistrationRequestMapper;
-import com.xwsbsep.agent.application.model.Company;
 import com.xwsbsep.agent.application.model.CompanyRegistrationRequest;
 import com.xwsbsep.agent.application.model.User;
 import com.xwsbsep.agent.application.repository.CompanyRegistrationRequestRepository;
@@ -37,7 +35,6 @@ public class CompanyRegistrationRequestServiceImpl implements CompanyRegistratio
             CompanyRegistrationRequest savedRequest = this.save(new CompanyRegistrationRequestMapper().mapRequestDtoToRequest(dto));
             user.setCompany(savedRequest.getCompany());
             this.userRepository.save(user);
-
             return true;
         }
         return false;

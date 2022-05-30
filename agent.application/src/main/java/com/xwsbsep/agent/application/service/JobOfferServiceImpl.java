@@ -1,7 +1,6 @@
 package com.xwsbsep.agent.application.service;
 
 import com.xwsbsep.agent.application.dto.JobOfferDTO;
-import com.xwsbsep.agent.application.mapper.CompanyMapper;
 import com.xwsbsep.agent.application.mapper.JobOfferMapper;
 import com.xwsbsep.agent.application.model.Company;
 import com.xwsbsep.agent.application.model.JobOffer;

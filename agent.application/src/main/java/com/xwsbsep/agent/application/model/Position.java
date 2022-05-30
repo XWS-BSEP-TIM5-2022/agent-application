@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 @Entity
 @Table(name = "positions")
@@ -15,6 +16,11 @@ public class Position {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Name of position is mandatory!")
     private String name;
+
+    @Column(name="pay", nullable = false)
+    @Min(value = 100, message = "Pay can not be less than 100!")
+    @Positive(message = "Pay is a positive value!")
     private Long pay;
 }

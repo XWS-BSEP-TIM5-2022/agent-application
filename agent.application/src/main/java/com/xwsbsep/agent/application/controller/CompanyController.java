@@ -12,8 +12,9 @@ import com.xwsbsep.agent.application.service.intereface.JobOfferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.*;
 
 @RestController
 @RequestMapping(value = "/company")
@@ -30,7 +31,7 @@ public class CompanyController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/request_registration")
     //@PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> saveRegistrationRequest(@RequestBody CompanyRegistrationRequestDTO dto) {
+    public ResponseEntity<?> saveRegistrationRequest(@Valid @RequestBody CompanyRegistrationRequestDTO dto) {
         boolean saved = this.companyRegistrationRequestService.saveRegistrationRequest(dto);
         if (saved){
             return new ResponseEntity(HttpStatus.CREATED);
@@ -60,7 +61,7 @@ public class CompanyController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/{companyId}/job_offer")
     //@PreAuthorize("hasRole('COMPANY_OWNER')")
-    public ResponseEntity<?> saveJobOffer(@RequestBody JobOfferDTO dto, @PathVariable Long companyId) {
+    public ResponseEntity<?> saveJobOffer(@Valid @RequestBody JobOfferDTO dto, @PathVariable Long companyId) {
         dto.setCompanyId(companyId);
         boolean saved = this.jobOfferService.saveJobOffer(dto);
         if (saved != false){
