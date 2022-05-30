@@ -19,7 +19,8 @@ public class Position {
     @NotBlank(message = "Name of position is mandatory!")
     private String name;
 
+    @Column(name="pay", nullable = false)
     @Min(value = 100, message = "Pay can not be less than 100!")
-    @Positive(message = "Pay is a positive value!")     // TODO:
+    @Positive(message = "Pay is a positive value!")
     private Long pay;
 }

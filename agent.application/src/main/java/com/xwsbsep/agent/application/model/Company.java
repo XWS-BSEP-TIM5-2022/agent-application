@@ -23,7 +23,7 @@ public class Company {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     @NotBlank(message = "Name of company is mandatory!")
     private String name;
 

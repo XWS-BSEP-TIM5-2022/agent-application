@@ -83,4 +83,10 @@ public class CompanyController {
     public ResponseEntity<?> getAllRequests() {
         return new ResponseEntity(this.companyRegistrationRequestService.findAll(), HttpStatus.OK);
     }
+
+    @RequestMapping(method = RequestMethod.GET)
+    //@PreAuthorize("hasRole('COMPANY_OWNER') or hasRole('ADMIN') or hasRole('USER')") å
+    public ResponseEntity<?> getAll() {
+        return new ResponseEntity(this.companyService.findAll(), HttpStatus.OK);
+    }
 }
