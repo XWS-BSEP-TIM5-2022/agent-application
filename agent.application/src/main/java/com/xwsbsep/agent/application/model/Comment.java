@@ -23,7 +23,7 @@ public class Comment {
     @JoinColumn(name = "company_id")
     private Company company;
 
-    @Column(name="title", nullable = false, unique = true)
+    @Column(name="title", nullable = false)
     private String title;
 
     @Column(name="content", nullable = false, columnDefinition = "text")

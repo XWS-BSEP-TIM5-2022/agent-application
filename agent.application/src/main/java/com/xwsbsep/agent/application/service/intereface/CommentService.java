@@ -1,16 +1,13 @@
 package com.xwsbsep.agent.application.service.intereface;
 
-import com.xwsbsep.agent.application.dto.AddInterviewCommentDTO;
-import com.xwsbsep.agent.application.dto.CommentDTO;
-import com.xwsbsep.agent.application.dto.CommentInterviewDTO;
-import com.xwsbsep.agent.application.dto.CommentSalaryDTO;
+import com.xwsbsep.agent.application.dto.*;
 import com.xwsbsep.agent.application.model.Comment;
 import com.xwsbsep.agent.application.model.CommentSalary;
 
 import java.util.List;
 
 public interface CommentService {
-    CommentDTO addComment(Comment comment, Long companyId) throws Exception;
+    void addComment(AddCommentDTO comment) throws Exception;
 
     List<CommentDTO> findAllByCompanyId(Long companyId);
 

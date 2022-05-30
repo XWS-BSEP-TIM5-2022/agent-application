@@ -26,7 +26,7 @@ public class CommentInterview {
     @Column(name="position", nullable = false)
     private String position;
 
-    @Column(name="title", nullable = false, unique = true)
+    @Column(name="title", nullable = false)
     private String title;
 
     @Column(name="hr_interview", nullable = false, columnDefinition = "text")

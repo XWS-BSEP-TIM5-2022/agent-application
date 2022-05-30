@@ -1,9 +1,6 @@
 package com.xwsbsep.agent.application.service;
 
-import com.xwsbsep.agent.application.dto.AddInterviewCommentDTO;
-import com.xwsbsep.agent.application.dto.CommentDTO;
-import com.xwsbsep.agent.application.dto.CommentInterviewDTO;
-import com.xwsbsep.agent.application.dto.CommentSalaryDTO;
+import com.xwsbsep.agent.application.dto.*;
 import com.xwsbsep.agent.application.mapper.CommentInterviewMapper;
 import com.xwsbsep.agent.application.mapper.CommentMapper;
 import com.xwsbsep.agent.application.mapper.CommentSalaryMapper;
@@ -34,18 +31,13 @@ public class CommentServiceImpl implements CommentService {
     private CommentInterviewRepository commentInterviewRepository;
 
     @Override
-    public CommentDTO addComment(Comment comment, Long companyId) throws Exception {
-        Company company = companyRepository.findCompanyById(companyId);
+    public void addComment(AddCommentDTO dto) throws Exception {
+        Comment comment = new CommentMapper().mapAddCommentDtoToComment(dto);
+        Company company = companyRepository.findCompanyById(dto.getCompanyId());
         if(!company.isActive())
             throw new Exception("Company is not active");
         comment.setCompany(company);
         commentRepository.save(comment);
-
-        Comment savedComment = commentRepository.findByTitleLike(comment.getTitle());
-        CommentDTO dto = new CommentMapper().mapCommentToCommentDto(savedComment);
-        if(dto == null)
-            throw new Exception("Comment is not saved, try again");
-        return dto;
     }
 
     @Override

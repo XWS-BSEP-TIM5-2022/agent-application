@@ -22,11 +22,10 @@ public class CommentController {
 
     @RequestMapping(method = RequestMethod.POST)
     //@PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> addCompanyComment(@RequestBody AddCommentDTO reqDto) throws Exception {
+    public ResponseEntity<?> addCompanyComment(@RequestBody AddCommentDTO dto) throws Exception {
         try {
-            Comment comment = new CommentMapper().mapAddCommentDtoToComment(reqDto);
-            CommentDTO dto = commentService.addComment(comment, reqDto.getCompanyId());
-            return new ResponseEntity<>(dto, HttpStatus.OK);
+            commentService.addComment(dto);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
