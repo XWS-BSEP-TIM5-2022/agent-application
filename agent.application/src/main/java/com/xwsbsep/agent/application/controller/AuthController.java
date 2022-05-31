@@ -16,6 +16,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthController {
@@ -27,15 +29,17 @@ public class AuthController {
     private TokenUtils tokenUtils;
 
     @RequestMapping(method = RequestMethod.POST, value = "/register")
-    public ResponseEntity<UserDTO> registerUser(@RequestBody User user) {
-        if(!userService.checkPasswordCriteria(user.getPassword(), user.getUsername())) {
-            return new ResponseEntity("Password must contain minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character" , HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<UserDTO> registerUser(@RequestBody User user) throws Exception {
+
+        try {
+            UserDTO userDTO = userService.registerUser(user);
+            if(userDTO == null) {
+                return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            return new ResponseEntity(userDTO, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        UserDTO userDTO = userService.registerUser(user);
-        if(userDTO == null) {
-            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity(userDTO, HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/activateAccount")
@@ -47,18 +51,21 @@ public class AuthController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/login")
-    public ResponseEntity<UserTokenStateDTO> login(@RequestBody JwtAuthenticationDTO authenticationRequest) {
+    public ResponseEntity<UserTokenStateDTO> login(@RequestBody @Valid JwtAuthenticationDTO authenticationRequest) {
         Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     authenticationRequest.getEmail(), authenticationRequest.getPassword()));
         } catch (Exception ex) {
-            return new ResponseEntity("Auth error", HttpStatus.BAD_REQUEST);
+            if (ex.getMessage().contains("User is disabled")) {
+                return new ResponseEntity("Account is not activated", HttpStatus.BAD_REQUEST);
+            }
+            return new ResponseEntity("Bad credentials", HttpStatus.BAD_REQUEST);
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         User user = (User) authentication.getPrincipal();
-        if (!user.isActivated()) {
+        if (!user.getIsActivated()) {
             return new ResponseEntity("User is not activated", HttpStatus.BAD_REQUEST);
         }
         String jwt = tokenUtils.generateToken(user.getUsername(), user.getUserType().getName());

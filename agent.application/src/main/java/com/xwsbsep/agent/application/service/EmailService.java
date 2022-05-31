@@ -1,5 +1,7 @@
 package com.xwsbsep.agent.application.service;
 
+import com.xwsbsep.agent.application.model.User;
+import com.xwsbsep.agent.application.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.SimpleMailMessage;
@@ -14,6 +16,8 @@ import javax.mail.internet.MimeMessage;
 public class EmailService {
     @Autowired
     private Environment env;
+    @Autowired
+    private UserRepository userRepository;
 
     private JavaMailSender javaMailSender;
 
@@ -39,7 +43,6 @@ public class EmailService {
             javaMailSender.send(message);
             return true;
         } catch (Exception e) {
-            System.out.println(e);
             return false;
         }
     }

@@ -7,7 +7,7 @@ import com.xwsbsep.agent.application.model.User;
 import java.util.List;
 
 public interface UserService {
-    UserDTO registerUser(User user);
+    UserDTO registerUser(User user) throws Exception;
 
     boolean verifyUserAccount(String verificationToken);
 

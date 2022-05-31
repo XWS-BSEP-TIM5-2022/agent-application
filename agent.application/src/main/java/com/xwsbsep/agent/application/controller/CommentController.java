@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -22,11 +23,10 @@ public class CommentController {
 
     @RequestMapping(method = RequestMethod.POST)
     //@PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> addCompanyComment(@RequestBody AddCommentDTO reqDto) throws Exception {
+    public ResponseEntity<?> addCompanyComment(@RequestBody @Valid AddCommentDTO dto) throws Exception {
         try {
-            Comment comment = new CommentMapper().mapAddCommentDtoToComment(reqDto);
-            CommentDTO dto = commentService.addComment(comment, reqDto.getCompanyId());
-            return new ResponseEntity<>(dto, HttpStatus.OK);
+            commentService.addComment(dto);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -49,7 +49,7 @@ public class CommentController {
 
     @RequestMapping(method = RequestMethod.POST,value = "/salary" )
     //@PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> addSalaryComment(@RequestBody AddSalaryCommentDTO reqDto) throws Exception {
+    public ResponseEntity<?> addSalaryComment(@RequestBody @Valid AddSalaryCommentDTO reqDto) throws Exception {
         try {
             CommentSalary comment = new CommentSalaryMapper().mapAddCommentDtoToComment(reqDto);
             commentService.addCommentSalary(comment, reqDto.getCompanyId());
@@ -68,7 +68,7 @@ public class CommentController {
 
     @RequestMapping(method = RequestMethod.POST,value = "/interview" )
     //@PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> addInterviewComment(@RequestBody AddInterviewCommentDTO reqDto) throws Exception {
+    public ResponseEntity<?> addInterviewComment(@RequestBody @Valid AddInterviewCommentDTO reqDto) throws Exception {
         try {
             commentService.addCommentInterview(reqDto);
             return new ResponseEntity<>(HttpStatus.OK);
