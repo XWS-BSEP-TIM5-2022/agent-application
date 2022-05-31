@@ -13,17 +13,14 @@ import com.xwsbsep.agent.application.security.util.TokenUtils;
 import com.xwsbsep.agent.application.service.intereface.UserService;
 import com.xwsbsep.agent.application.service.intereface.UserTypeService;
 import com.xwsbsep.agent.application.service.intereface.VerificationTokenService;
+import org.passay.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -46,12 +43,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO registerUser(User user) throws Exception {
-        if(!checkPasswordCriteria(user.getPassword(), user.getUsername())) {
-            throw  new Exception("Password must contain minimum eight characters, at least one uppercase " +
-                    "letter, one lowercase letter, one number and one special character");
+        if (!checkPasswordCriteria(user.getPassword(), user.getUsername())) {
+            String pswdError = "Password must contain minimum eight characters, at least one uppercase " +
+                    "letter, one lowercase letter, one number and one special character and " +
+                    "must not contain username and white spaces";
+            System.out.println(pswdError);
+            throw new Exception(pswdError);
         }
         UserType role = userTypeService.findUserTypeByName("ROLE_USER");
-        if(role == null) {
+        if (role == null) {
             throw new Exception("Role does not exist");
         }
         user.setUserType(role);
@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
         user.setCompany(null);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         VerificationToken verificationToken = new VerificationToken(user);
-        if(!emailService.sendAccountActivationMail(verificationToken.getToken(), user.getEmail())){
+        if (!emailService.sendAccountActivationMail(verificationToken.getToken(), user.getEmail())) {
             throw new Exception("Email for account verification not sent, try again");
         }
         userRepository.save(user);
@@ -73,9 +73,10 @@ public class UserServiceImpl implements UserService {
     public boolean verifyUserAccount(String token) {
         VerificationToken verificationToken = verificationTokenRepository.findVerificationTokenByToken(token);
         long difference_In_Time = (new Date()).getTime() - verificationToken.getCreatedDateTime().getTime();
-        User user = userRepository.findByEmail(verificationToken.getUser().getEmail());;
+        User user = userRepository.findByEmail(verificationToken.getUser().getEmail());
+        ;
         long difference_In_Minutes = (difference_In_Time / (1000 * 60)) % 60;
-        if(difference_In_Minutes <= TOKEN_EXPIRES_MINUTES) {
+        if (difference_In_Minutes <= TOKEN_EXPIRES_MINUTES) {
             user.setIsActivated(true);
             userRepository.save(user);
             return true;
@@ -89,7 +90,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDTO> getAll() {
         List<UserDTO> dtos = new ArrayList<>();
-        for(User user: userRepository.findAll()) {
+        for (User user : userRepository.findAll()) {
             dtos.add(new UserMapper().mapUserToUserDto(user));
         }
         return dtos;
@@ -102,19 +103,39 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean checkPasswordCriteria(String password, String username) {
-        String pattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])(?=\\S+$).{" + MIN_PASSWORD_LENGTH + ",}$";
-        if (!password.matches(pattern))
-            return password.matches(pattern);
-        if (password.toLowerCase().contains(username.toLowerCase())) {
-            return false;
+//        String pattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])(?=\\S+$).{" + MIN_PASSWORD_LENGTH + ",}$";
+//        if (!password.matches(pattern))
+//            return password.matches(pattern);
+//        if (password.toLowerCase().contains(username.toLowerCase())) {
+//            return false;
+//        }
+//        return true;
+        PasswordValidator validator = new PasswordValidator(Arrays.asList(
+                new LengthRule(8, 100),
+                new UppercaseCharacterRule(1),
+                new LowercaseCharacterRule(1),
+                new DigitCharacterRule(1),
+                new SpecialCharacterRule(1),
+//                new NumericalSequenceRule(1,false),
+//                new AlphabeticalSequenceRule(1,false),
+//                new QwertySequenceRule(1,false),
+                new WhitespaceRule()));
+
+        RuleResult result = validator.validate(new PasswordData(password));
+        if (result.isValid()) {
+            if(password.toLowerCase().contains(username.toLowerCase())) {
+                System.out.println("Password must not contain username");
+                return false;
+            }
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override
     public CompanyDTO getCompanyByOwnerUsername(String username) {
-        for (User user: this.userRepository.findAll()) {
-            if (user.getUsername().equals(username) && user.getCompany() != null){
+        for (User user : this.userRepository.findAll()) {
+            if (user.getUsername().equals(username) && user.getCompany() != null) {
                 return new CompanyMapper().mapCompanyToCompanyDto(user.getCompany());
             }
         }
@@ -125,4 +146,5 @@ public class UserServiceImpl implements UserService {
     public UserDTO findById(Long id) {
         return new UserMapper().mapUserToUserDto(this.userRepository.findUserById(id));
     }
+
 }
