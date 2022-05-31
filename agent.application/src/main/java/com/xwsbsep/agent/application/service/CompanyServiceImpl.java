@@ -26,7 +26,9 @@ public class CompanyServiceImpl implements CompanyService {
     public List<CompanyDTO> findAll() {
         List<CompanyDTO> dtos = new ArrayList<>();
         for(Company c: companyRepository.findAll()){
-            dtos.add(new CompanyMapper().mapCompanyToCompanyDto(c));
+            if(c.isActive()) {
+                dtos.add(new CompanyMapper().mapCompanyToCompanyDto(c));
+            }
         }
         return dtos;
     }
