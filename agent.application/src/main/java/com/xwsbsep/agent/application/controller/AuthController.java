@@ -55,7 +55,10 @@ public class AuthController {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     authenticationRequest.getEmail(), authenticationRequest.getPassword()));
         } catch (Exception ex) {
-            return new ResponseEntity("Auth error", HttpStatus.BAD_REQUEST);
+            if (ex.getMessage().contains("User is disabled")) {
+                return new ResponseEntity("Account is not activated", HttpStatus.BAD_REQUEST);
+            }
+            return new ResponseEntity("Bad credentials", HttpStatus.BAD_REQUEST);
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
