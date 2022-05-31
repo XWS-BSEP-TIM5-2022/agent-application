@@ -43,6 +43,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO registerUser(User user) throws Exception {
+        if(!emailIsUnique(user.getEmail())){
+            throw new Exception("Email is not unique");
+        }
+        if(!usernameIsUnique(user.getUsername())){
+            throw new Exception("Username is not unique");
+        }
         if (!checkPasswordCriteria(user.getPassword(), user.getUsername())) {
             String pswdError = "Password must contain minimum eight characters, at least one uppercase " +
                     "letter, one lowercase letter, one number and one special character and " +
@@ -67,6 +73,24 @@ public class UserServiceImpl implements UserService {
         verificationTokenService.saveVerificationToken(verificationToken);
         User registeredUser = userRepository.findByEmail(user.getEmail());
         return new UserMapper().mapUserToUserDto(registeredUser);
+    }
+
+    private boolean usernameIsUnique(String username) {
+        for (User user : userRepository.findAll()) {
+            if(user.getUsername().equals(username)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean emailIsUnique(String email) {
+        for (User user : userRepository.findAll()) {
+            if(user.getEmail().equals(email)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -103,13 +127,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean checkPasswordCriteria(String password, String username) {
-//        String pattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])(?=\\S+$).{" + MIN_PASSWORD_LENGTH + ",}$";
-//        if (!password.matches(pattern))
-//            return password.matches(pattern);
-//        if (password.toLowerCase().contains(username.toLowerCase())) {
-//            return false;
-//        }
-//        return true;
         PasswordValidator validator = new PasswordValidator(Arrays.asList(
                 new LengthRule(8, 100),
                 new UppercaseCharacterRule(1),
