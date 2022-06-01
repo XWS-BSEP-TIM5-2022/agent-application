@@ -32,4 +32,19 @@ public class CompanyServiceImpl implements CompanyService {
         }
         return dtos;
     }
+
+    @Override
+    public boolean updateCompanyInfo(CompanyDTO dto){
+        Company c = companyRepository.findCompanyById(dto.getId());
+
+        if(c != null){
+            c.setName(dto.getName());
+            c.setDescription(dto.getDescription());
+            c.setPhoneNumber(dto.getPhoneNumber());
+            companyRepository.save(c);
+            return true;
+        }
+
+        return false;
+    }
 }

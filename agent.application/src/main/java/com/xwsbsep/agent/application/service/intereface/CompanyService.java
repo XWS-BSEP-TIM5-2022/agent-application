@@ -9,4 +9,5 @@ public interface CompanyService {
     CompanyDTO findCompanyById(Long id);
 
     List<CompanyDTO> findAll();
+    boolean updateCompanyInfo(CompanyDTO dto);
 }
