@@ -1,6 +1,7 @@
 package com.xwsbsep.agent.application.controller;
 
 import com.xwsbsep.agent.application.dto.CommentDTO;
+import com.xwsbsep.agent.application.dto.CompanyDTO;
 import com.xwsbsep.agent.application.dto.CompanyRegistrationRequestDTO;
 import com.xwsbsep.agent.application.dto.JobOfferDTO;
 import com.xwsbsep.agent.application.model.Comment;
@@ -92,5 +93,16 @@ public class CompanyController {
     //@PreAuthorize("hasRole('COMPANY_OWNER') or hasRole('ADMIN') or hasRole('USER')") å
     public ResponseEntity<?> getAll() {
         return new ResponseEntity(this.companyService.findAll(), HttpStatus.OK);
+    }
+
+
+    @RequestMapping(method = RequestMethod.PUT, value = "/updateCompanyInfo")
+    //@PreAuthorize("hasRole('COMPANY_OWNER')")
+    public ResponseEntity<?> updateCompanyInfo(@RequestBody CompanyDTO dto) {
+        boolean updated = this.companyService.updateCompanyInfo(dto);
+        if (updated){
+            return new ResponseEntity(HttpStatus.OK);
+        }
+        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
