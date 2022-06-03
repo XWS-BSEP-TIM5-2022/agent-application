@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
     private VerificationTokenRepository verificationTokenRepository;
 
     @Override
-    public UserDTO registerUser(User user) throws Exception {
+    public UserDTO  registerUser(User user) throws Exception {
         if(!emailIsUnique(user.getEmail())){
             throw new Exception("Email is not unique");
         }
