@@ -27,7 +27,7 @@ public class Company {
     @NotBlank(message = "Name of company is mandatory!")
     private String name;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, columnDefinition = "text")
     @NotBlank(message = "Description of company is mandatory!")
     private String description;
 

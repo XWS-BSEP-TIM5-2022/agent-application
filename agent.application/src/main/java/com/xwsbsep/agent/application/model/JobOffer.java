@@ -31,12 +31,15 @@ public class JobOffer {
     @JoinColumn(name = "position_id", referencedColumnName = "id")
     private Position position;
 
+    @Column(columnDefinition = "text")
     @NotBlank(message = "Job description is mandatory!")
     private String jobDescription;
 
+    @Column(columnDefinition = "text")
     @NotBlank(message = "Daily activities are mandatory!")
     private String dailyActivities;
 
+    @Column(columnDefinition = "text")
     @NotBlank(message = "Preconditions are mandatory!")
     private String preconditions;
 }
