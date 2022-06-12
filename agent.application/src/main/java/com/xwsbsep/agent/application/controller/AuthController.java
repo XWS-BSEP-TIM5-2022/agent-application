@@ -6,6 +6,7 @@ import com.xwsbsep.agent.application.dto.UserTokenStateDTO;
 import com.xwsbsep.agent.application.model.User;
 import com.xwsbsep.agent.application.security.util.TokenUtils;
 import com.xwsbsep.agent.application.service.intereface.UserService;
+import org.apache.log4j.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,6 +34,7 @@ public class AuthController {
 
     static Logger log = Logger.getLogger(AuthController.class.getName());
 
+
     @RequestMapping(method = RequestMethod.POST, value = "/register")
     public ResponseEntity<UserDTO> registerUser(@RequestBody User user) throws Exception {
 
@@ -45,6 +47,8 @@ public class AuthController {
             log.debug("Hello this is a debug message");
             log.info("Hello this is an info message");
             log.warn("Hello this is a warn message");
+            log.error("Hello this is a error message");
+
 
             return new ResponseEntity(userDTO, HttpStatus.CREATED);
         } catch (Exception e) {
