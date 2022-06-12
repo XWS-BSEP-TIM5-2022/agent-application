@@ -6,7 +6,6 @@ import com.xwsbsep.agent.application.dto.UserTokenStateDTO;
 import com.xwsbsep.agent.application.model.User;
 import com.xwsbsep.agent.application.security.util.TokenUtils;
 import com.xwsbsep.agent.application.service.intereface.UserService;
-import org.apache.log4j.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
