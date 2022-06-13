@@ -16,6 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import org.apache.log4j.Logger;
+
+
 import javax.validation.Valid;
 
 @RestController
@@ -28,6 +31,9 @@ public class AuthController {
     @Autowired
     private TokenUtils tokenUtils;
 
+    static Logger log = Logger.getLogger(AuthController.class.getName());
+
+
     @RequestMapping(method = RequestMethod.POST, value = "/register")
     public ResponseEntity<UserDTO> registerUser(@RequestBody User user) throws Exception {
 
@@ -36,6 +42,13 @@ public class AuthController {
             if(userDTO == null) {
                 return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
             }
+
+            log.debug("Hello this is a debug message");
+            log.info("Hello this is an info message");
+            log.warn("Hello this is a warn message");
+            log.error("Hello this is a error message");
+
+
             return new ResponseEntity(userDTO, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
