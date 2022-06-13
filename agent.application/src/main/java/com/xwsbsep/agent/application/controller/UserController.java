@@ -32,21 +32,21 @@ public class UserController {
     @RequestMapping(method = RequestMethod.GET, value = "/{username}")
     //@PreAuthorize("hasRole('COMPANY_OWNER') or hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<?> getByUsername(@PathVariable String username){
-        log.info("User with username: " + username + "successfully found");
+        log.info("User with username: " + username + " successfully found");
         return new ResponseEntity<>(userService.findByUsername(username), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/id/{id}")
     //@PreAuthorize("hasRole('COMPANY_OWNER') or hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<?> getById(@PathVariable Long id){
-        log.info("User with id: " + id + "successfully found");
+        log.info("User with id: " + id + " successfully found");
         return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{username}/company")
     //@PreAuthorize("hasRole('COMPANY_OWNER')")
     public ResponseEntity<?> getCompanyByOwnerUsername(@PathVariable String username){
-        log.info("Company from owner with username: " + username + "successfully found");
+        log.info("Company from owner with username: " + username + " successfully found");
         return new ResponseEntity<>(userService.getCompanyByOwnerUsername(username), HttpStatus.OK);
     }
 

@@ -40,7 +40,7 @@ public class CompanyController {
     public ResponseEntity<?> saveRegistrationRequest(@Valid @RequestBody CompanyRegistrationRequestDTO dto) {
         boolean saved = this.companyRegistrationRequestService.saveRegistrationRequest(dto);
         if (saved){
-            log.info("Company: " + dto.getCompanyDTO().getName() + "successfully activated");
+            log.info("Company: " + dto.getCompanyDTO().getName() + " successfully activated");
             //log.info("Company" + dto.getCompanyDTO().getName() + "successfully activated by" + SecurityContextHolder.getContext().getAuthentication().getName());
             return new ResponseEntity(HttpStatus.CREATED);
         }
@@ -52,7 +52,7 @@ public class CompanyController {
     public ResponseEntity<?> approveRequest(@PathVariable Long requestId) {
         boolean approved = this.companyRegistrationRequestService.approveRequest(requestId);
         if (approved){
-            log.info("Company with id: " + requestId + "successfully activated");
+            log.info("Company with id: " + requestId + " successfully activated");
             return new ResponseEntity(HttpStatus.OK);
         }
         log.error("Error while approving request for registration company with id: " + requestId);
@@ -64,7 +64,7 @@ public class CompanyController {
     public ResponseEntity<?> rejectRequest(@PathVariable Long requestId) {
         boolean rejected = this.companyRegistrationRequestService.rejectRequest(requestId);
         if (rejected){
-            log.info("Request for company with id: " + requestId + "successfully rejected");
+            log.info("Request for company with id: " + requestId + " successfully rejected");
             return new ResponseEntity(HttpStatus.OK);
         }
         log.error("Error while rejecting request for registration company with id: " + requestId);
@@ -77,10 +77,10 @@ public class CompanyController {
         dto.setCompanyId(companyId);
         boolean saved = this.jobOfferService.saveJobOffer(dto);
         if (saved != false){
-            log.info("Job offer with id: " + dto.getId() + "successfully saved to the company with id: " + companyId);
+            log.info("Job offer with id: " + dto.getId() + " successfully saved to the company with id: " + companyId);
             return new ResponseEntity(HttpStatus.CREATED);
         }
-        log.error("Error while saving job offer with id: " + dto.getId() + "to the company with id: " + companyId);
+        log.error("Error while saving job offer with id: " + dto.getId() + " to the company with id: " + companyId);
         return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -94,7 +94,7 @@ public class CompanyController {
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     //@PreAuthorize("hasRole('COMPANY_OWNER') or hasRole('ADMIN') or hasRole('USER')")  // TODO: CHECK ?
     public ResponseEntity<?> getCompanyById(@PathVariable Long id) {
-        log.info("Getting company with id: " + id + "success!");
+        log.info("Getting company with id: " + id + " success!");
         return new ResponseEntity(this.companyService.findCompanyById(id), HttpStatus.OK);
     }
 
@@ -118,7 +118,7 @@ public class CompanyController {
     public ResponseEntity<?> updateCompanyInfo(@RequestBody CompanyDTO dto) {
         boolean updated = this.companyService.updateCompanyInfo(dto);
         if (updated){
-            log.info("Company with id: " + dto.getId() + "successfully updated!");
+            log.info("Company with id: " + dto.getId() + " successfully updated!");
             return new ResponseEntity(HttpStatus.OK);
         }
         log.error("Company update failed. Id company is: " + dto.getId());
