@@ -3,6 +3,7 @@ package com.xwsbsep.agent.application.controller;
 import com.xwsbsep.agent.application.dto.JwtAuthenticationDTO;
 import com.xwsbsep.agent.application.dto.UserDTO;
 import com.xwsbsep.agent.application.dto.UserTokenStateDTO;
+import com.xwsbsep.agent.application.model.Permission;
 import com.xwsbsep.agent.application.model.User;
 import com.xwsbsep.agent.application.security.util.TokenUtils;
 import com.xwsbsep.agent.application.service.intereface.UserService;
@@ -21,6 +22,7 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Collection;
 
 @RestController
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -61,8 +63,8 @@ public class AuthController {
 
         if(userService.verifyUserAccount(verificationToken)) {
 
-            String username = tokenUtils.getUsernameFromToken(verificationToken.split(WHITESPACE)[1]);
-            log.info("Successfully activated account by user " + username);
+//            String username = tokenUtils.getUsernameFromToken(verificationToken.split(WHITESPACE)[1]);
+            log.info("Successfully activated account by user " /*+ username*/);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         log.warn("Tried account activation with invalid token: " + verificationToken + " From ip address: " + request.getRemoteAddr());
@@ -93,7 +95,8 @@ public class AuthController {
             log.error("Failed login. Username: " + authenticationRequest.getEmail() + " , ip address: " + request.getRemoteAddr() + " . Account not activated.");
             return new ResponseEntity("User is not activated", HttpStatus.BAD_REQUEST);
         }
-        String jwt = tokenUtils.generateToken(user.getUsername(), user.getUserType().getName());
+        Collection<Permission> p = user.getUserType().getPermissions();
+        String jwt = tokenUtils.generateToken(user.getUsername(), user.getUserType().getName(), p);
         int expiresIn = tokenUtils.getExpiredIn();
 
         log.info("Successful login. Username: " + authenticationRequest.getEmail() + " , ip address: " + request.getRemoteAddr());

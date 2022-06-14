@@ -58,7 +58,7 @@ public class User implements UserDetails {
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JoinColumn(name = "role_id")
-    private UserType userType = new UserType();
+    private UserType userType;
 
     @OneToOne(/*cascade = CascadeType.ALL*/)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -67,9 +67,9 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<UserType> ut = new ArrayList<UserType>();
-        ut.add(userType);
-        return ut;
+//        List<UserType> ut = new ArrayList<UserType>();
+//        ut.add(userType);
+        return this.userType.getPermissions();
     }
 
     @Override
