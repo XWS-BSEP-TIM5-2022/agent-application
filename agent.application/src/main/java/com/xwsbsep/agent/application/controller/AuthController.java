@@ -32,6 +32,9 @@ public class AuthController {
     @Autowired
     private TokenUtils tokenUtils;
 
+    private static final String WHITESPACE = " ";
+
+
     static Logger log = Logger.getLogger(AuthController.class.getName());
 
 
@@ -53,10 +56,15 @@ public class AuthController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/activateAccount")
-    public ResponseEntity<?> activateAccount(@RequestParam("token")String verificationToken) {
+    public ResponseEntity<?> activateAccount(@RequestParam("token")String verificationToken, HttpServletRequest request) {
+
         if(userService.verifyUserAccount(verificationToken)) {
+
+            String username = tokenUtils.getUsernameFromToken(verificationToken.split(WHITESPACE)[1]);
+            log.info("Successfully activated account by user " + username);
             return new ResponseEntity<>(HttpStatus.OK);
         }
+        log.error("Account activation with invalid token: " + verificationToken + " From ip address: " + request.getRemoteAddr());
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -69,11 +77,11 @@ public class AuthController {
         } catch (Exception ex) {
             if (ex.getMessage().contains("User is disabled")) {
 
-                log.error("Failed login. User email: " + authenticationRequest.getEmail() + " , Ip address: " + request.getRemoteAddr() + " . Account not activated.");
+                log.error("Failed login. User email: " + authenticationRequest.getEmail() + " , from ip address: " + request.getRemoteAddr() + " . Account not activated.");
                 return new ResponseEntity("Account is not activated", HttpStatus.BAD_REQUEST);
             }
 
-            log.warn("Failed login. User email: " + authenticationRequest.getEmail() + " , Ip address: " + request.getRemoteAddr() + " . Bad credentials.");
+            log.warn("Failed login. User email: " + authenticationRequest.getEmail() + " , from ip address: " + request.getRemoteAddr() + " . Bad credentials.");
             return new ResponseEntity("Bad credentials", HttpStatus.BAD_REQUEST);
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -81,7 +89,7 @@ public class AuthController {
         User user = (User) authentication.getPrincipal();
         if (!user.getIsActivated()) {
 
-            log.error("Failed login. User email: " + authenticationRequest.getEmail() + " , Ip address: " + request.getRemoteAddr() + " . Account not activated.");
+            log.error("Failed login. User email: " + authenticationRequest.getEmail() + " , from ip address: " + request.getRemoteAddr() + " . Account not activated.");
             return new ResponseEntity("User is not activated", HttpStatus.BAD_REQUEST);
         }
         String jwt = tokenUtils.generateToken(user.getUsername(), user.getUserType().getName());
