@@ -48,7 +48,7 @@ public class EmailService {
     }
 
     public String accountActivationMessage(String token) {
-        String url = "http://localhost:" + env.getProperty("frontend.port") + "/activate-account/" + token;
+        String url = "https://localhost:" + env.getProperty("frontend.port") + "/activate-account/" + token;
 //        String url = "http://localhost:" + env.getProperty("server.port") + "/auth/activateAccount?token=" + token;
         String message = "<html><body style=\"background-color: #f4f4f4; margin: 0 !important; padding: 0 !important;\">\n" +
                 "    <!-- HIDDEN PREHEADER TEXT -->\n" +
