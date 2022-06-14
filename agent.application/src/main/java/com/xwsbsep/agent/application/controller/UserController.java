@@ -21,29 +21,29 @@ public class UserController {
     static Logger log = Logger.getLogger(UserController.class.getName());
 
     @RequestMapping(method = RequestMethod.GET, value = "/getAll")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('getAllUsers')")
     public ResponseEntity<?> getAll(Principal user){
-//        User user1 = userService.findByUsername(user.getName());
+        //User user1 = userService.findByUsername(user.getName());
         log.info("Getting all users success!");
         return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{username}")
-    //@PreAuthorize("hasRole('COMPANY_OWNER') or hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasAuthority('getUserByUsername')")
     public ResponseEntity<?> getByUsername(@PathVariable String username){
         log.info("User with username: " + username + " successfully found");
         return new ResponseEntity<>(userService.findByUsername(username), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/id/{id}")
-    //@PreAuthorize("hasRole('COMPANY_OWNER') or hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasAuthority('getUserById')")
     public ResponseEntity<?> getById(@PathVariable Long id){
         log.info("User with id: " + id + " successfully found");
         return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{username}/company")
-    //@PreAuthorize("hasRole('COMPANY_OWNER')")
+    @PreAuthorize("hasAuthority('getCompanyByOwnerUsername')")
     public ResponseEntity<?> getCompanyByOwnerUsername(@PathVariable String username){
         log.info("Company from owner with username: " + username + " successfully found");
         return new ResponseEntity<>(userService.getCompanyByOwnerUsername(username), HttpStatus.OK);
@@ -51,7 +51,7 @@ public class UserController {
 
     @RequestMapping(method = RequestMethod.POST,value = "/changePassword",
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    //@PreAuthorize("hasAuthority('changePassword')")
+    @PreAuthorize("hasAuthority('changePassword')")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDTO dto, Principal user) throws Exception {
         try {
             userService.changePassword(dto, user.getName());

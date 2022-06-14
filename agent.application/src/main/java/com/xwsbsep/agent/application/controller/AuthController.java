@@ -93,7 +93,7 @@ public class AuthController {
             log.error("Failed login. Username: " + authenticationRequest.getEmail() + " , ip address: " + request.getRemoteAddr() + " . Account not activated.");
             return new ResponseEntity("User is not activated", HttpStatus.BAD_REQUEST);
         }
-        String jwt = tokenUtils.generateToken(user.getUsername(), user.getUserType().getName());
+        String jwt = tokenUtils.generateToken(user.getUsername(), user.getUserType().getName(), user.getUserType().getPermissions());
         int expiresIn = tokenUtils.getExpiredIn();
 
         log.info("Successful login. Username: " + authenticationRequest.getEmail() + " , ip address: " + request.getRemoteAddr());
