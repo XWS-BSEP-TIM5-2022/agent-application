@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -37,15 +38,14 @@ public class AuthController {
     @Autowired
     VerificationTokenRepository verificationTokenRepository;
 
-    private static final String WHITESPACE = " ";
-
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     static Logger log = Logger.getLogger(AuthController.class.getName());
 
 
     @RequestMapping(method = RequestMethod.POST, value = "/register")
     public ResponseEntity<UserDTO> registerUser(@RequestBody User user) throws Exception {
-        System.out.println("cao");
         try {
             UserDTO userDTO = userService.registerUser(user);
             if(userDTO == null) {
@@ -56,7 +56,12 @@ public class AuthController {
 
             return new ResponseEntity(userDTO, HttpStatus.CREATED);
         } catch (Exception e) {
-            log.error("Registration failed for user with username: " + user.getUsername());
+            if(!VALID_EMAIL_ADDRESS_REGEX.matcher(user.getEmail()).find()){
+                log.error("Registration failed for user - email invalid");
+
+            }else{
+                log.error("Registration failed for user with email: " + user.getEmail());
+            }
             return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -66,6 +71,11 @@ public class AuthController {
 
         if(userService.verifyUserAccount(verificationToken)) {
             String email = verificationTokenRepository.findVerificationTokenByToken(verificationToken).getUser().getEmail();
+            if(!VALID_EMAIL_ADDRESS_REGEX.matcher(email).find()){
+                log.error("Tried account activation with invalid token. From ip address: " + request.getRemoteAddr());
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
             log.info("Successfully activated account by user with email: " + email);
             return new ResponseEntity<>(HttpStatus.OK);
         }

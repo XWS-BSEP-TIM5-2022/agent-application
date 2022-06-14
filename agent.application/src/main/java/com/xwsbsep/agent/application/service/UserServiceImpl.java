@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -44,10 +45,19 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private VerificationTokenRepository verificationTokenRepository;
 
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
+
     static Logger log = Logger.getLogger(UserServiceImpl.class.getName());
 
     @Override
     public UserDTO  registerUser(User user) throws Exception {
+
+        if(!VALID_EMAIL_ADDRESS_REGEX.matcher(user.getEmail()).find()){
+            log.error("Registration failed. Email invalid");
+            throw new Exception("Email invalid");
+        }
         if(!emailIsUnique(user.getEmail())){
             log.error("Registration failed. Email " + user.getEmail() + " not unique");
             throw new Exception("Email is not unique");
