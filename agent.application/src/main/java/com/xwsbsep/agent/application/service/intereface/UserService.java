@@ -1,5 +1,6 @@
 package com.xwsbsep.agent.application.service.intereface;
 
+import com.xwsbsep.agent.application.dto.ChangePasswordDTO;
 import com.xwsbsep.agent.application.dto.CompanyDTO;
 import com.xwsbsep.agent.application.dto.UserDTO;
 import com.xwsbsep.agent.application.model.User;
@@ -20,4 +21,8 @@ public interface UserService {
     CompanyDTO getCompanyByOwnerUsername(String username);
 
     UserDTO findById(Long id);
+
+    void changePassword(ChangePasswordDTO dto, String name) throws Exception;
+
+    boolean checkPasswordCriteria(String password);
 }

@@ -1,16 +1,15 @@
 package com.xwsbsep.agent.application.controller;
 
+import com.xwsbsep.agent.application.dto.ChangePasswordDTO;
 import com.xwsbsep.agent.application.model.User;
 import com.xwsbsep.agent.application.service.intereface.UserService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -48,6 +47,18 @@ public class UserController {
     public ResponseEntity<?> getCompanyByOwnerUsername(@PathVariable String username){
         log.info("Company from owner with username: " + username + " successfully found");
         return new ResponseEntity<>(userService.getCompanyByOwnerUsername(username), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.POST,value = "/changePassword",
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    //@PreAuthorize("hasAuthority('changePassword')")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDTO dto, Principal user) throws Exception {
+        try {
+            userService.changePassword(dto, user.getName());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

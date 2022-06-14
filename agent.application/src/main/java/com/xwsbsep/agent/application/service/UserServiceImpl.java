@@ -1,6 +1,7 @@
 package com.xwsbsep.agent.application.service;
 
 import com.xwsbsep.agent.application.controller.AuthController;
+import com.xwsbsep.agent.application.dto.ChangePasswordDTO;
 import com.xwsbsep.agent.application.dto.CompanyDTO;
 import com.xwsbsep.agent.application.dto.UserDTO;
 import com.xwsbsep.agent.application.mapper.CompanyMapper;
@@ -169,6 +170,48 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO findById(Long id) {
         return new UserMapper().mapUserToUserDto(this.userRepository.findUserById(id));
+    }
+
+    @Override
+    public void changePassword(ChangePasswordDTO dto, String name) throws Exception {
+        String pswdError = "Password must contain minimum eight characters, at least one uppercase " +
+                "letter, one lowercase letter, one number and one special character and " +
+                "must not contain white spaces";
+        if (!checkPasswordCriteria(dto.getNewPassword())) {
+            throw new Exception(pswdError);
+        }
+        if (!checkPasswordCriteria(dto.getReenteredPassword())) {
+            throw new Exception(pswdError);
+        }
+
+        User user = userRepository.findByUsername(name);
+        if(!user.getIsActivated()){
+            throw new Exception("Account is not activated");
+        }
+        if (!passwordEncoder.matches(dto.getOldPassword(), user.getPassword())) {
+            throw new Exception("Old password does not match the current password");
+        }
+        if (!dto.getNewPassword().equals(dto.getReenteredPassword())) {
+            throw new Exception("New passwords do not match");
+        }
+
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        user.setLastPasswordResetDate(Timestamp.from(Instant.now()));
+        userRepository.save(user);
+    }
+
+    @Override
+    public boolean checkPasswordCriteria(String password) {
+        PasswordValidator validator = new PasswordValidator(Arrays.asList(
+                new LengthRule(8, 100),
+                new UppercaseCharacterRule(1),
+                new LowercaseCharacterRule(1),
+                new DigitCharacterRule(1),
+                new SpecialCharacterRule(1),
+                new WhitespaceRule()));
+
+        RuleResult result = validator.validate(new PasswordData(password));
+        return result.isValid();
     }
 
 }
