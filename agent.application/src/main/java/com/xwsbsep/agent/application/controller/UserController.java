@@ -29,6 +29,7 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{username}")
+    @PreAuthorize("hasAuthority('getUserByUsername')")
     //@PreAuthorize("hasRole('COMPANY_OWNER') or hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<?> getByUsername(@PathVariable String username){
         log.info("User with username: " + username + " successfully found");
