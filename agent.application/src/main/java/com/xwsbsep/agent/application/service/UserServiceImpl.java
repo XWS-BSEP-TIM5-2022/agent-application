@@ -1,5 +1,6 @@
 package com.xwsbsep.agent.application.service;
 
+import com.xwsbsep.agent.application.controller.AuthController;
 import com.xwsbsep.agent.application.dto.CompanyDTO;
 import com.xwsbsep.agent.application.dto.UserDTO;
 import com.xwsbsep.agent.application.mapper.CompanyMapper;
@@ -13,6 +14,7 @@ import com.xwsbsep.agent.application.security.util.TokenUtils;
 import com.xwsbsep.agent.application.service.intereface.UserService;
 import com.xwsbsep.agent.application.service.intereface.UserTypeService;
 import com.xwsbsep.agent.application.service.intereface.VerificationTokenService;
+import org.apache.log4j.Logger;
 import org.passay.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,23 +43,29 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private VerificationTokenRepository verificationTokenRepository;
 
+    static Logger log = Logger.getLogger(UserServiceImpl.class.getName());
+
     @Override
     public UserDTO  registerUser(User user) throws Exception {
         if(!emailIsUnique(user.getEmail())){
+            log.error("Registration failed. Email " + user.getEmail() + " not unique");
             throw new Exception("Email is not unique");
         }
         if(!usernameIsUnique(user.getUsername())){
+            log.error("Registration failed. Username " + user.getUsername() + " not unique");
             throw new Exception("Username is not unique");
         }
         if (!checkPasswordCriteria(user.getPassword(), user.getUsername())) {
             String pswdError = "Password must contain minimum eight characters, at least one uppercase " +
                     "letter, one lowercase letter, one number and one special character and " +
                     "must not contain username and white spaces";
+            log.error("Registration failed for user " + user.getUsername() + ". Password does not match criteria.");
             System.out.println(pswdError);
             throw new Exception(pswdError);
         }
         UserType role = userTypeService.findUserTypeByName("ROLE_USER");
         if (role == null) {
+            log.error("Registration failed. There is no role with name: ROLE_USER");
             throw new Exception("Role does not exist");
         }
         user.setUserType(role);
@@ -67,6 +75,8 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         VerificationToken verificationToken = new VerificationToken(user);
         if (!emailService.sendAccountActivationMail(verificationToken.getToken(), user.getEmail())) {
+
+            log.error("Registration failed. Verification email not sent to mail: " + user.getEmail());
             throw new Exception("Email for account verification not sent, try again");
         }
         userRepository.save(user);
