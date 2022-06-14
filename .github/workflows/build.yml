@@ -4,7 +4,7 @@ on:
     branches:
       - master
       - develop
-      - feature/sonarcloud
+      - feat/sonar-cloud
 jobs:
   build:
     name: Build and Analyze
