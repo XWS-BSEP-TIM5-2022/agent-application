@@ -5,6 +5,7 @@ import com.xwsbsep.agent.application.dto.UserDTO;
 import com.xwsbsep.agent.application.dto.UserTokenStateDTO;
 import com.xwsbsep.agent.application.model.Permission;
 import com.xwsbsep.agent.application.model.User;
+import com.xwsbsep.agent.application.repository.VerificationTokenRepository;
 import com.xwsbsep.agent.application.security.util.TokenUtils;
 import com.xwsbsep.agent.application.service.intereface.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,8 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private TokenUtils tokenUtils;
+    @Autowired
+    VerificationTokenRepository verificationTokenRepository;
 
     private static final String WHITESPACE = " ";
 
@@ -62,9 +65,8 @@ public class AuthController {
     public ResponseEntity<?> activateAccount(@RequestParam("token")String verificationToken, HttpServletRequest request) {
 
         if(userService.verifyUserAccount(verificationToken)) {
-
-//            String username = tokenUtils.getUsernameFromToken(verificationToken.split(WHITESPACE)[1]);
-            log.info("Successfully activated account by user " /*+ username*/);
+            String email = verificationTokenRepository.findVerificationTokenByToken(verificationToken).getUser().getEmail();
+            log.info("Successfully activated account by user with email: " + email);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         log.warn("Tried account activation with invalid token: " + verificationToken + " From ip address: " + request.getRemoteAddr());
