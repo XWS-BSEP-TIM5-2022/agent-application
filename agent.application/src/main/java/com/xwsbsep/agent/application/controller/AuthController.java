@@ -40,7 +40,7 @@ public class AuthController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/register")
     public ResponseEntity<UserDTO> registerUser(@RequestBody User user) throws Exception {
-
+        System.out.println("cao");
         try {
             UserDTO userDTO = userService.registerUser(user);
             if(userDTO == null) {
