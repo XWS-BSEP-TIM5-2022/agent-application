@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.apache.log4j.Logger;
 
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -30,6 +31,9 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private TokenUtils tokenUtils;
+
+    private static final String WHITESPACE = " ";
+
 
     static Logger log = Logger.getLogger(AuthController.class.getName());
 
@@ -43,46 +47,56 @@ public class AuthController {
                 return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
-            log.debug("Hello this is a debug message");
-            log.info("Hello this is an info message");
-            log.warn("Hello this is a warn message");
-            log.error("Hello this is a error message");
-
+            log.info("Successful registration with email: " + user.getEmail() + ". User id: " + userDTO.getId());
 
             return new ResponseEntity(userDTO, HttpStatus.CREATED);
         } catch (Exception e) {
+            log.error("Registration failed for user with username: " + user.getUsername());
             return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/activateAccount")
-    public ResponseEntity<?> activateAccount(@RequestParam("token")String verificationToken) {
+    public ResponseEntity<?> activateAccount(@RequestParam("token")String verificationToken, HttpServletRequest request) {
+
         if(userService.verifyUserAccount(verificationToken)) {
+
+            String username = tokenUtils.getUsernameFromToken(verificationToken.split(WHITESPACE)[1]);
+            log.info("Successfully activated account by user " + username);
             return new ResponseEntity<>(HttpStatus.OK);
         }
+        log.warn("Tried account activation with invalid token: " + verificationToken + " From ip address: " + request.getRemoteAddr());
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/login")
-    public ResponseEntity<UserTokenStateDTO> login(@RequestBody @Valid JwtAuthenticationDTO authenticationRequest) {
+    public ResponseEntity<UserTokenStateDTO> login(@RequestBody @Valid JwtAuthenticationDTO authenticationRequest, HttpServletRequest request) {
         Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     authenticationRequest.getEmail(), authenticationRequest.getPassword()));
         } catch (Exception ex) {
             if (ex.getMessage().contains("User is disabled")) {
+
+                log.error("Failed login. Username: " + authenticationRequest.getEmail() + " , ip address: " + request.getRemoteAddr() + " . Account not activated.");
                 return new ResponseEntity("Account is not activated", HttpStatus.BAD_REQUEST);
             }
+
+            log.warn("Failed login. Username: " + authenticationRequest.getEmail() + " , ip address: " + request.getRemoteAddr() + " . Bad credentials.");
             return new ResponseEntity("Bad credentials", HttpStatus.BAD_REQUEST);
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         User user = (User) authentication.getPrincipal();
         if (!user.getIsActivated()) {
+
+            log.error("Failed login. Username: " + authenticationRequest.getEmail() + " , ip address: " + request.getRemoteAddr() + " . Account not activated.");
             return new ResponseEntity("User is not activated", HttpStatus.BAD_REQUEST);
         }
         String jwt = tokenUtils.generateToken(user.getUsername(), user.getUserType().getName());
         int expiresIn = tokenUtils.getExpiredIn();
+
+        log.info("Successful login. Username: " + authenticationRequest.getEmail() + " , ip address: " + request.getRemoteAddr());
 
         return ResponseEntity.ok(new UserTokenStateDTO(jwt, expiresIn));
     }
