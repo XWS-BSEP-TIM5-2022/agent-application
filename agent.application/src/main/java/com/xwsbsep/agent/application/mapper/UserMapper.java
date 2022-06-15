@@ -19,6 +19,11 @@ public class UserMapper {
         if(user.getCompany() != null) {
             dto.setCompanyDTO(new CompanyMapper().mapCompanyToCompanyDto(user.getCompany()));
         }
+        dto.setUsing2FA(user.isUsing2FA());
+
+        if(user.isUsing2FA()){
+            dto.setSecret(user.getSecret());
+        }
         return dto;
     }
 }

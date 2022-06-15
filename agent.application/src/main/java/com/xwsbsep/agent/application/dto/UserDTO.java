@@ -13,4 +13,7 @@ public class UserDTO {
     private String lastName;
     private String userTypeName;
     private CompanyDTO companyDTO;
+    private boolean using2FA;
+    private String secret;
+    private String qrCode;
 }

@@ -66,6 +66,11 @@ public class User implements UserDetails {
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     private Company company;
 
+    @Column(name = "using_2fa")
+    private boolean using2FA;
+
+    private String secret;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 //        List<UserType> ut = new ArrayList<UserType>();
@@ -113,5 +118,19 @@ public class User implements UserDetails {
         this.isActivated = u.getIsActivated();
         this.lastPasswordResetDate = u.getLastPasswordResetDate();
         this.userType = u.getUserType();
+    }
+    public User(Long id, String email, String username, String password, Timestamp lastPasswordResetDate, String firstName, String lastName, Boolean isActivated, UserType userType, Company company) {
+        this.id = id;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.lastPasswordResetDate = lastPasswordResetDate;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.isActivated = isActivated;
+        this.userType = userType;
+        this.company = company;
+        this.using2FA = false;
+        this.secret = "";
     }
 }
