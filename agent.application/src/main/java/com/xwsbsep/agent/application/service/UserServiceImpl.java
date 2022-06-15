@@ -15,6 +15,7 @@ import com.xwsbsep.agent.application.security.util.TokenUtils;
 import com.xwsbsep.agent.application.service.intereface.UserService;
 import com.xwsbsep.agent.application.service.intereface.UserTypeService;
 import com.xwsbsep.agent.application.service.intereface.VerificationTokenService;
+import dev.samstevens.totp.secret.SecretGenerator;
 import org.apache.log4j.Logger;
 import org.passay.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,9 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private VerificationTokenRepository verificationTokenRepository;
+
+    @Autowired
+    private SecretGenerator secretGenerator;
 
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
@@ -85,6 +89,11 @@ public class UserServiceImpl implements UserService {
         user.setIsActivated(false);
         user.setCompany(null);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        if (user.isUsing2FA()) { 
+            user.setSecret(secretGenerator.generate());
+        }
+
         VerificationToken verificationToken = new VerificationToken(user);
         if (!emailService.sendAccountActivationMail(verificationToken.getToken(), user.getEmail())) {
 

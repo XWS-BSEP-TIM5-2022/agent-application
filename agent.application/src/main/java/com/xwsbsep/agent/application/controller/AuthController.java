@@ -8,6 +8,10 @@ import com.xwsbsep.agent.application.model.User;
 import com.xwsbsep.agent.application.repository.VerificationTokenRepository;
 import com.xwsbsep.agent.application.security.util.TokenUtils;
 import com.xwsbsep.agent.application.service.intereface.UserService;
+import dev.samstevens.totp.code.CodeVerifier;
+import dev.samstevens.totp.qr.QrData;
+import dev.samstevens.totp.qr.QrDataFactory;
+import dev.samstevens.totp.qr.QrGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,6 +30,8 @@ import javax.validation.Valid;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
+import static dev.samstevens.totp.util.Utils.getDataUriForImage;
+
 @RestController
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthController {
@@ -37,6 +43,15 @@ public class AuthController {
     private TokenUtils tokenUtils;
     @Autowired
     VerificationTokenRepository verificationTokenRepository;
+
+    @Autowired
+    private QrDataFactory qrDataFactory;
+
+    @Autowired
+    private QrGenerator qrGenerator;
+
+    @Autowired
+    private CodeVerifier verifier;
 
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
@@ -50,6 +65,12 @@ public class AuthController {
             UserDTO userDTO = userService.registerUser(user);
             if(userDTO == null) {
                 return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+            if (userDTO.isUsing2FA()) {
+                QrData data = qrDataFactory.newBuilder().label(user.getEmail()).secret(user.getSecret()).issuer("JavaChinna").build();
+                String qrCodeImage = getDataUriForImage(qrGenerator.generate(data), qrGenerator.getImageMimeType());
+                userDTO.setQrCode(qrCodeImage);
             }
 
             log.info("Successful registration with email: " + user.getEmail() + ". User id: " + userDTO.getId());
