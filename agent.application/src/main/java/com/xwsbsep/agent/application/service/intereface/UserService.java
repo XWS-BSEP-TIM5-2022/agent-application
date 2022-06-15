@@ -25,4 +25,6 @@ public interface UserService {
     void changePassword(ChangePasswordDTO dto, String name) throws Exception;
 
     boolean checkPasswordCriteria(String password);
+
+    boolean checkIfEnabled2FA(String email) throws Exception;
 }

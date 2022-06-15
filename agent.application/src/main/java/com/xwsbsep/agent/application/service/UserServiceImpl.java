@@ -15,9 +15,12 @@ import com.xwsbsep.agent.application.security.util.TokenUtils;
 import com.xwsbsep.agent.application.service.intereface.UserService;
 import com.xwsbsep.agent.application.service.intereface.UserTypeService;
 import com.xwsbsep.agent.application.service.intereface.VerificationTokenService;
+import dev.samstevens.totp.secret.SecretGenerator;
 import org.apache.log4j.Logger;
 import org.passay.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -46,9 +49,14 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private VerificationTokenRepository verificationTokenRepository;
 
+    @Autowired
+    private SecretGenerator secretGenerator;
+
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
+    public static final Pattern VALID_USERNAME_REGEX =
+            Pattern.compile("^[a-zA-Z0-9]([._-](?![._-])|[a-zA-Z0-9]){3,18}[a-zA-Z0-9]$");
 
     static Logger log = Logger.getLogger(UserServiceImpl.class.getName());
 
@@ -58,6 +66,11 @@ public class UserServiceImpl implements UserService {
         if(!VALID_EMAIL_ADDRESS_REGEX.matcher(user.getEmail()).find()){
             log.error("Registration failed. Email invalid");
             throw new Exception("Email invalid");
+        }
+
+        if(!VALID_USERNAME_REGEX.matcher(user.getUsername()).find()){
+            log.error("Registration failed. Username invalid");
+            throw new Exception("Username invalid");
         }
         if(!emailIsUnique(user.getEmail())){
             log.error("Registration failed. Email " + user.getEmail() + " not unique");
@@ -85,6 +98,11 @@ public class UserServiceImpl implements UserService {
         user.setIsActivated(false);
         user.setCompany(null);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        if (user.isUsing2FA()) {
+            user.setSecret(secretGenerator.generate());
+        }
+
         VerificationToken verificationToken = new VerificationToken(user);
         if (!emailService.sendAccountActivationMail(verificationToken.getToken(), user.getEmail())) {
 
@@ -208,6 +226,19 @@ public class UserServiceImpl implements UserService {
         Pattern pattern = Pattern.compile("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[-+_!@#$%^&*.,?:;<>=`~)({}|/])(?=\\S+$).{8,}$");
         Matcher passMatcher = pattern.matcher(password);
         return passMatcher.matches();
+    }
+
+    @Override
+    public boolean checkIfEnabled2FA(String username) throws Exception {
+
+        User user = userRepository.findByUsername(username);
+
+        if(user == null || !user.getIsActivated()){
+            log.error("Check if 2FA is enabled for account failed. Account with username " + username + " not activated.");
+            throw new Exception("Account with username " + username + " not activated.");
+        }
+
+        return user.isUsing2FA();
     }
 
 }
