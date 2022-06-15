@@ -8,6 +8,7 @@ import com.xwsbsep.agent.application.service.intereface.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -32,7 +33,7 @@ public class CommentController {
 
 
     @RequestMapping(method = RequestMethod.POST)
-    //@PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('addCompanyComment')")
     public ResponseEntity<?> addCompanyComment(@RequestBody @Valid AddCommentDTO dto, @RequestHeader("Authorization") String jwtToken) throws Exception {
 
         String username = tokenUtils.getUsernameFromToken(jwtToken.split(WHITESPACE)[1]);
@@ -47,7 +48,7 @@ public class CommentController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/company/{companyId}")
-    //@PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('getAllCompanyCommentsByCompanyId')")
     public ResponseEntity<?> getAllCompanyCommentsByCompanyId(@PathVariable Long companyId) throws Exception {
        List<CommentDTO> commentsDto = commentService.findAllByCompanyId(companyId);
        log.info("Found " + commentsDto.size() + " comments for company with id " + companyId);
@@ -55,7 +56,7 @@ public class CommentController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/company/{companyId}/positions")
-    //@PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('getPositionsByCompanyId')")
     public ResponseEntity<?> getPositionsByCompanyId(@PathVariable Long companyId) throws Exception {
         List<String> positionsName = commentService.getPositionsByCompanyId(companyId);
         log.info("Found " + positionsName.size() + " positions for company with id " + companyId);
@@ -64,7 +65,7 @@ public class CommentController {
 
 
     @RequestMapping(method = RequestMethod.POST,value = "/salary" )
-    //@PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('addSalaryComment')")
     public ResponseEntity<?> addSalaryComment(@RequestBody @Valid AddSalaryCommentDTO reqDto, @RequestHeader("Authorization") String jwtToken) throws Exception {
 
         String username = tokenUtils.getUsernameFromToken(jwtToken.split(WHITESPACE)[1]);
@@ -81,7 +82,7 @@ public class CommentController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/salary/company/{companyId}")
-    // @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('getAllSalaryCommentsByCompanyId')")
     public ResponseEntity<?> getAllSalaryCommentsByCompanyId(@PathVariable Long companyId) throws Exception {
         List<CommentSalaryDTO> commentsDto = commentService.getAllSalaryCommentsByCompanyId(companyId);
         log.info("Found " + commentsDto.size() + " comments for salary in company with id " + companyId);
@@ -89,7 +90,7 @@ public class CommentController {
     }
 
     @RequestMapping(method = RequestMethod.POST,value = "/interview" )
-    //@PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('addInterviewComment')")
     public ResponseEntity<?> addInterviewComment(@RequestBody @Valid AddInterviewCommentDTO reqDto, @RequestHeader("Authorization") String jwtToken) throws Exception {
 
         String username = tokenUtils.getUsernameFromToken(jwtToken.split(WHITESPACE)[1]);
@@ -104,7 +105,7 @@ public class CommentController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/interview/company/{companyId}")
-    // @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('getAllInterviewCommentsByCompanyId')")
     public ResponseEntity<?> getAllInterviewCommentsByCompanyId(@PathVariable Long companyId) throws Exception {
         List<CommentInterviewDTO> commentsDto = commentService.getAllInterviewCommentsByCompanyId(companyId);
         log.info("Found " + commentsDto.size() + " comments for interviews in company with id " + companyId);
