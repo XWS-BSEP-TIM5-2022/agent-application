@@ -54,6 +54,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO  registerUser(User user) throws Exception {
+        String username = user.getUsername();
+        username = username.replaceAll("[\n\r\t]", "_");
 
         if(!VALID_EMAIL_ADDRESS_REGEX.matcher(user.getEmail()).find()){
             log.error("Registration failed. Email invalid");
@@ -64,14 +66,15 @@ public class UserServiceImpl implements UserService {
             throw new Exception("Email is not unique");
         }
         if(!usernameIsUnique(user.getUsername())){
-            log.error("Registration failed. Username " + user.getUsername() + " not unique");
+
+            log.error("Registration failed. Username " + username + " not unique");
             throw new Exception("Username is not unique");
         }
         if (!checkPasswordCriteria(user.getPassword(), user.getUsername())) {
             String pswdError = "Password must contain minimum eight characters, at least one uppercase " +
                     "letter, one lowercase letter, one number and one special character and " +
                     "must not contain username and white spaces";
-            log.error("Registration failed for user " + user.getUsername() + ". Password does not match criteria.");
+            log.error("Registration failed for user " + username + ". Password does not match criteria.");
             System.out.println(pswdError);
             throw new Exception(pswdError);
         }

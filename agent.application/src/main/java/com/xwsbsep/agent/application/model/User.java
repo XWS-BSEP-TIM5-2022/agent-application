@@ -1,5 +1,6 @@
 package com.xwsbsep.agent.application.model;
 
+import com.xwsbsep.agent.application.dto.RegisterUserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -100,5 +101,17 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return isActivated;
+    }
+
+    public User(RegisterUserDTO u){
+        this.email = u.getEmail();
+        this.company = u.getCompany();
+        this.firstName = u.getFirstName();
+        this.lastName = u.getLastName();
+        this.password = u.getPassword();
+        this.username = u.getUsername();
+        this.isActivated = u.getIsActivated();
+        this.lastPasswordResetDate = u.getLastPasswordResetDate();
+        this.userType = u.getUserType();
     }
 }

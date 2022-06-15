@@ -1,6 +1,7 @@
 package com.xwsbsep.agent.application.controller;
 
 import com.xwsbsep.agent.application.dto.JwtAuthenticationDTO;
+import com.xwsbsep.agent.application.dto.RegisterUserDTO;
 import com.xwsbsep.agent.application.dto.UserDTO;
 import com.xwsbsep.agent.application.dto.UserTokenStateDTO;
 import com.xwsbsep.agent.application.model.Permission;
@@ -45,7 +46,8 @@ public class AuthController {
 
 
     @RequestMapping(method = RequestMethod.POST, value = "/register")
-    public ResponseEntity<UserDTO> registerUser(@RequestBody User user) throws Exception {
+    public ResponseEntity<UserDTO> registerUser(@RequestBody RegisterUserDTO u) throws Exception {
+        User user = new User(u);
         try {
             UserDTO userDTO = userService.registerUser(user);
             if(userDTO == null) {
@@ -79,6 +81,8 @@ public class AuthController {
             log.info("Successfully activated account by user with email: " + email);
             return new ResponseEntity<>(HttpStatus.OK);
         }
+
+        verificationToken = verificationToken.replaceAll("[\n\r\t]", "_");
         log.warn("Tried account activation with invalid token: " + verificationToken + " From ip address: " + request.getRemoteAddr());
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -86,17 +90,20 @@ public class AuthController {
     @RequestMapping(method = RequestMethod.POST, value = "/login")
     public ResponseEntity<UserTokenStateDTO> login(@RequestBody @Valid JwtAuthenticationDTO authenticationRequest, HttpServletRequest request) {
         Authentication authentication;
+        String email = authenticationRequest.getEmail();
+        email = email.replaceAll("[\n\r\t]", "_");
+
         try {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     authenticationRequest.getEmail(), authenticationRequest.getPassword()));
         } catch (Exception ex) {
             if (ex.getMessage().contains("User is disabled")) {
 
-                log.error("Failed login. Username: " + authenticationRequest.getEmail() + " , ip address: " + request.getRemoteAddr() + " . Account not activated.");
+                log.error("Failed login. Username: " + email + " , ip address: " + request.getRemoteAddr() + " . Account not activated.");
                 return new ResponseEntity("Account is not activated", HttpStatus.BAD_REQUEST);
             }
 
-            log.warn("Failed login. Username: " + authenticationRequest.getEmail() + " , ip address: " + request.getRemoteAddr() + " . Bad credentials.");
+            log.warn("Failed login. Username: " + email + " , ip address: " + request.getRemoteAddr() + " . Bad credentials.");
             return new ResponseEntity("Bad credentials", HttpStatus.BAD_REQUEST);
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -104,14 +111,14 @@ public class AuthController {
         User user = (User) authentication.getPrincipal();
         if (!user.getIsActivated()) {
 
-            log.error("Failed login. Username: " + authenticationRequest.getEmail() + " , ip address: " + request.getRemoteAddr() + " . Account not activated.");
+            log.error("Failed login. Username: " + email+ " , ip address: " + request.getRemoteAddr() + " . Account not activated.");
             return new ResponseEntity("User is not activated", HttpStatus.BAD_REQUEST);
         }
         Collection<Permission> p = user.getUserType().getPermissions();
         String jwt = tokenUtils.generateToken(user.getUsername(), user.getUserType().getName(), p);
         int expiresIn = tokenUtils.getExpiredIn();
 
-        log.info("Successful login. Username: " + authenticationRequest.getEmail() + " , ip address: " + request.getRemoteAddr());
+        log.info("Successful login. Username: " + email + " , ip address: " + request.getRemoteAddr());
 
         return ResponseEntity.ok(new UserTokenStateDTO(jwt, expiresIn));
     }

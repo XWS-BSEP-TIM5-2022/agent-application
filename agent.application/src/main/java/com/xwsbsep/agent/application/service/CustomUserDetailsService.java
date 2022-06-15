@@ -18,10 +18,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByUsername(username);
         System.out.println("Auuuuthority" );
         System.out.println(user.getUserType().getAuthority());
-        if (user == null) {
-            throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
-        } else {
+        //if (user != null) {
             return user;
-        }
+        //}
+        //throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
     }
 }

@@ -134,7 +134,7 @@ public class TokenUtils {
         try {
             final Claims claims = this.getAllClaimsFromToken(token);
             username = claims.getSubject();
-        } catch (ExpiredJwtException ex) {
+        } catch (NullPointerException ex) {
             throw ex;
         } catch (Exception e) {
             username = null;
@@ -153,7 +153,7 @@ public class TokenUtils {
         try {
             final Claims claims = this.getAllClaimsFromToken(token);
             issueAt = claims.getIssuedAt();
-        } catch (ExpiredJwtException ex) {
+        } catch (NullPointerException ex) {
             throw ex;
         } catch (Exception e) {
             issueAt = null;
@@ -172,7 +172,7 @@ public class TokenUtils {
         try {
             final Claims claims = this.getAllClaimsFromToken(token);
             audience = claims.getAudience();
-        } catch (ExpiredJwtException ex) {
+        } catch (NullPointerException ex) {
             throw ex;
         } catch (Exception e) {
             audience = null;
@@ -191,7 +191,7 @@ public class TokenUtils {
         try {
             final Claims claims = this.getAllClaimsFromToken(token);
             expiration = claims.getExpiration();
-        } catch (ExpiredJwtException ex) {
+        } catch (NullPointerException ex) {
             throw ex;
         } catch (Exception e) {
             expiration = null;
@@ -213,7 +213,7 @@ public class TokenUtils {
                     .setSigningKey(SECRET)
                     .parseClaimsJws(token)
                     .getBody();
-        } catch (ExpiredJwtException ex) {
+        } catch (NullPointerException ex) {
             throw ex;
         } catch (Exception e) {
             claims = null;
