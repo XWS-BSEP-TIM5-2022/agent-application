@@ -186,7 +186,7 @@ public class UserServiceImpl implements UserService {
 
         User user = userRepository.findByUsername(name);
         if(dto.getNewPassword().toLowerCase().contains(user.getUsername().toLowerCase())) {
-            throw new Exception("Password must not contain username");
+            throw new IllegalArgumentException(String.format("Password must not contain username"));
         }
         if(!user.getIsActivated()){
             throw new Exception("Account is not activated");
