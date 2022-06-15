@@ -61,6 +61,9 @@ public class AuthController {
             Pattern.compile("^[0-9]{1,6}$", Pattern.CASE_INSENSITIVE);
 
 
+    public static final Pattern VALID_USERNAME_REGEX =
+            Pattern.compile("^[a-zA-Z0-9]([._-](?![._-])|[a-zA-Z0-9]){3,18}[a-zA-Z0-9]$");
+
     static Logger log = Logger.getLogger(AuthController.class.getName());
 
 
@@ -73,7 +76,7 @@ public class AuthController {
             }
 
             if (userDTO.isUsing2FA()) {
-                QrData data = qrDataFactory.newBuilder().label(user.getEmail()).secret(user.getSecret()).issuer("JavaChinna").build();
+                QrData data = qrDataFactory.newBuilder().label(user.getEmail()).secret(user.getSecret()).issuer("Agent application").build();
                 String qrCodeImage = getDataUriForImage(qrGenerator.generate(data), qrGenerator.getImageMimeType());
                 userDTO.setQrCode(qrCodeImage);
             }
@@ -113,11 +116,10 @@ public class AuthController {
     public ResponseEntity<?> checkIfEnabled2FA(@PathVariable String username) throws Exception {
 
         try{
-            //TODO: validacija za username
-//            if(!VALID_EMAIL_ADDRESS_REGEX.matcher(username).find()){
-//                log.error("Check if 2FA is enabled for account failed. Email invalid");
-//                return new ResponseEntity("Email invalid", HttpStatus.INTERNAL_SERVER_ERROR);
-//            }
+            if(!VALID_USERNAME_REGEX.matcher(username).find()){
+                log.error("Check if 2FA is enabled for account failed. Username invalid");
+                return new ResponseEntity("Username invalid", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
 
             boolean isEnabled2FA = userService.checkIfEnabled2FA(username);
 
@@ -133,6 +135,12 @@ public class AuthController {
     @RequestMapping(method = RequestMethod.POST, value = "/login")
     public ResponseEntity<UserTokenStateDTO> login(@RequestBody @Valid JwtAuthenticationDTO authenticationRequest, HttpServletRequest request) {
         Authentication authentication;
+
+        if(!VALID_USERNAME_REGEX.matcher(authenticationRequest.getEmail()).find()){
+            log.error("Login failed. Username invalid");
+            return new ResponseEntity("Username invalid", HttpStatus.BAD_REQUEST);
+        }
+
         try {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     authenticationRequest.getEmail(), authenticationRequest.getPassword()));

@@ -55,6 +55,8 @@ public class UserServiceImpl implements UserService {
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
+    public static final Pattern VALID_USERNAME_REGEX =
+            Pattern.compile("^[a-zA-Z0-9]([._-](?![._-])|[a-zA-Z0-9]){3,18}[a-zA-Z0-9]$");
 
     static Logger log = Logger.getLogger(UserServiceImpl.class.getName());
 
@@ -64,6 +66,11 @@ public class UserServiceImpl implements UserService {
         if(!VALID_EMAIL_ADDRESS_REGEX.matcher(user.getEmail()).find()){
             log.error("Registration failed. Email invalid");
             throw new Exception("Email invalid");
+        }
+
+        if(!VALID_USERNAME_REGEX.matcher(user.getUsername()).find()){
+            log.error("Registration failed. Username invalid");
+            throw new Exception("Username invalid");
         }
         if(!emailIsUnique(user.getEmail())){
             log.error("Registration failed. Email " + user.getEmail() + " not unique");
