@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean checkPasswordCriteria(String password, String username) {
-        Pattern pattern = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-+_!@#$%^&*.,?:;<>=`~)({}|/])(?=\\S+$).{8,}$");
+        Pattern pattern = Pattern.compile("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[-+_!@#$%^&*.,?:;<>=`~)({}|/])(?=\\S+$).{8,}$");
         Matcher passMatcher = pattern.matcher(password);
         if(password.toLowerCase().contains(username.toLowerCase())) {
             return false;
@@ -205,7 +205,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean checkPasswordCriteria(String password) {
-        Pattern pattern = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-+_!@#$%^&*.,?:;<>=`~)({}|/])(?=\\S+$).{8,}$");
+        Pattern pattern = Pattern.compile("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[-+_!@#$%^&*.,?:;<>=`~)({}|/])(?=\\S+$).{8,}$");
         Matcher passMatcher = pattern.matcher(password);
         return passMatcher.matches();
     }
