@@ -174,9 +174,11 @@ public class AuthController {
                 return new ResponseEntity("Two factor code not valid", HttpStatus.BAD_REQUEST);
 
             }
+            String code = authenticationRequest.getCode();
+            code = code.replaceAll("[\n\r\t]", "_");
 
             if(!verifier.isValidCode(user.getSecret(), authenticationRequest.getCode())){
-                log.error("Failed login. Two factor code " + authenticationRequest.getCode() + "not valid. Ip address: " + request.getRemoteAddr());
+                log.error("Failed login. Two factor code " + code + "not valid. Ip address: " + request.getRemoteAddr());
                 return new ResponseEntity("Two factor code not valid", HttpStatus.BAD_REQUEST);
             }
         }
