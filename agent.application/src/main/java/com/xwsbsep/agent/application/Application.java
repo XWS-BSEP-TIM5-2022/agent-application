@@ -101,6 +101,9 @@ public class Application implements CommandLineRunner {
 		Permission getCompanyByOwnerUsername = new Permission("getCompanyByOwnerUsername");
 		companyOwnerPermissions.add(getCompanyByOwnerUsername);
 
+		Permission getCompanyById = new Permission("getCompanyById");
+		companyOwnerPermissions.add(getCompanyById);
+
 		return companyOwnerPermissions;
 	}
 
@@ -140,6 +143,9 @@ public class Application implements CommandLineRunner {
 
 		Permission getAllCompanies = new Permission("getAllCompanies");
 		userPermissions.add(getAllCompanies);
+
+		Permission getCompanyById = new Permission("getCompanyById");
+		userPermissions.add(getCompanyById);
 
 		// user controller
 		Permission getAllUsers = new Permission("getAllUsers");
@@ -195,6 +201,9 @@ public class Application implements CommandLineRunner {
 		//?
 		Permission saveJobOffer = new Permission("saveJobOffer");
 		adminPermissions.add(saveJobOffer);
+
+		Permission getCompanyById = new Permission("getCompanyById");
+		adminPermissions.add(getCompanyById);
 
 		return adminPermissions;
 	}
