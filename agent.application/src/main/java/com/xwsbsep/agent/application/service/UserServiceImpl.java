@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
@@ -148,23 +149,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean checkPasswordCriteria(String password, String username) {
-        PasswordValidator validator = new PasswordValidator(Arrays.asList(
-                new LengthRule(8, 100),
-//                new UppercaseCharacterRule(1),
-//                new LowercaseCharacterRule(1),
-//                new DigitCharacterRule(1),
-//                new SpecialCharacterRule(1),
-                new WhitespaceRule()));
-
-        RuleResult result = validator.validate(new PasswordData(password));
-        if (result.isValid()) {
-            if(password.toLowerCase().contains(username.toLowerCase())) {
-                System.out.println("Password must not contain username");
-                return false;
-            }
-            return true;
+        Pattern pattern = Pattern.compile("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[-+_!@#$%^&*.,?:;<>=`~)({}|/])(?=\\S+$).{8,}$");
+        Matcher passMatcher = pattern.matcher(password);
+        if(password.toLowerCase().contains(username.toLowerCase())) {
+            return false;
         }
-        return false;
+        return passMatcher.matches();
     }
 
     @Override
@@ -185,7 +175,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changePassword(ChangePasswordDTO dto, String name) throws Exception {
         String pswdError = "Password must contain minimum eight characters, at least one uppercase " +
-                "letter, one lowercase letter, one number and one special character and " +
+                "letter, one lowercase letter, one number and one special character(-+_!@#$%^&*.,?:;<>=`~)({}|/) and " +
                 "must not contain white spaces";
         if (!checkPasswordCriteria(dto.getNewPassword())) {
             throw new Exception(pswdError);
@@ -195,6 +185,9 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userRepository.findByUsername(name);
+        if(dto.getNewPassword().toLowerCase().contains(user.getUsername().toLowerCase())) {
+            throw new IllegalArgumentException(String.format("Password must not contain username"));
+        }
         if(!user.getIsActivated()){
             throw new Exception("Account is not activated");
         }
@@ -212,16 +205,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean checkPasswordCriteria(String password) {
-        PasswordValidator validator = new PasswordValidator(Arrays.asList(
-                new LengthRule(8, 100),
-//                new UppercaseCharacterRule(1),
-//                new LowercaseCharacterRule(1),
-//                new DigitCharacterRule(1),
-//                new SpecialCharacterRule(1),
-                new WhitespaceRule()));
-
-        RuleResult result = validator.validate(new PasswordData(password));
-        return result.isValid();
+        Pattern pattern = Pattern.compile("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[-+_!@#$%^&*.,?:;<>=`~)({}|/])(?=\\S+$).{8,}$");
+        Matcher passMatcher = pattern.matcher(password);
+        return passMatcher.matches();
     }
 
 }
