@@ -228,7 +228,7 @@ public class UserServiceImpl implements UserService {
 
         if(user == null || !user.getIsActivated()){
             log.error("Check if 2FA is enabled for account failed. Account with username " + username + " not activated.");
-            throw new Exception("Check if 2FA is enabled for account failed. Account with username " + username + " not activated.");
+            throw new Exception("Account with username " + username + " not activated.");
         }
 
         return user.isUsing2FA();

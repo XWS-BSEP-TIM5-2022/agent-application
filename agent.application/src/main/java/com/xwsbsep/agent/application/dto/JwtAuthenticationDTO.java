@@ -1,7 +1,9 @@
 package com.xwsbsep.agent.application.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@AllArgsConstructor
 public class JwtAuthenticationDTO {
     private String email;
     private String password;
@@ -36,7 +38,7 @@ public class JwtAuthenticationDTO {
         return this.code;
     }
 
-    public void setCode(String password) {
+    public void setCode(String code) {
         this.code = code;
     }
 

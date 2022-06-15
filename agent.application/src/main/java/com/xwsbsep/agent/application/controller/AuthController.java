@@ -155,7 +155,7 @@ public class AuthController {
         }
         if(user.isUsing2FA()){
 
-            if(authenticationRequest.getCode() == null || !TWO_FACTOR_CODE_REGEX.matcher(user.getEmail()).find()){
+            if(authenticationRequest.getCode() == null || !TWO_FACTOR_CODE_REGEX.matcher(authenticationRequest.getCode()).find()){
                 log.error("Failed login. Two factor code not valid. Ip address: " + request.getRemoteAddr());
                 return new ResponseEntity("Two factor code not valid", HttpStatus.BAD_REQUEST);
 
