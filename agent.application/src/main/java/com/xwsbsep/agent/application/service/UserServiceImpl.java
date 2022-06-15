@@ -19,6 +19,8 @@ import dev.samstevens.totp.secret.SecretGenerator;
 import org.apache.log4j.Logger;
 import org.passay.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -90,7 +92,7 @@ public class UserServiceImpl implements UserService {
         user.setCompany(null);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        if (user.isUsing2FA()) { 
+        if (user.isUsing2FA()) {
             user.setSecret(secretGenerator.generate());
         }
 
@@ -217,6 +219,19 @@ public class UserServiceImpl implements UserService {
         Pattern pattern = Pattern.compile("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[-+_!@#$%^&*.,?:;<>=`~)({}|/])(?=\\S+$).{8,}$");
         Matcher passMatcher = pattern.matcher(password);
         return passMatcher.matches();
+    }
+
+    @Override
+    public boolean checkIfEnabled2FA(String username) throws Exception {
+
+        User user = userRepository.findByUsername(username);
+
+        if(user == null || !user.getIsActivated()){
+            log.error("Check if 2FA is enabled for account failed. Account with username " + username + " not activated.");
+            throw new Exception("Check if 2FA is enabled for account failed. Account with username " + username + " not activated.");
+        }
+
+        return user.isUsing2FA();
     }
 
 }

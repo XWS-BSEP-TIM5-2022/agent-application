@@ -1,9 +1,11 @@
 package com.xwsbsep.agent.application.dto;
 
-// DTO za login
+import lombok.Getter;
+
 public class JwtAuthenticationDTO {
     private String email;
     private String password;
+    private String code;
 
     public JwtAuthenticationDTO() {
         super();
@@ -28,6 +30,14 @@ public class JwtAuthenticationDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getCode() {
+        return this.code;
+    }
+
+    public void setCode(String password) {
+        this.code = code;
     }
 
 }

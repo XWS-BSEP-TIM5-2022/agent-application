@@ -118,5 +118,7 @@ public class User implements UserDetails {
         this.isActivated = isActivated;
         this.userType = userType;
         this.company = company;
+        this.using2FA = false;
+        this.secret = "";
     }
 }

@@ -56,6 +56,11 @@ public class AuthController {
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
+
+    public static final Pattern TWO_FACTOR_CODE_REGEX =
+            Pattern.compile("^[0-9]{1,6}$", Pattern.CASE_INSENSITIVE);
+
+
     static Logger log = Logger.getLogger(AuthController.class.getName());
 
 
@@ -104,6 +109,27 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/checkIfEnabled2FA/{username}")
+    public ResponseEntity<?> checkIfEnabled2FA(@PathVariable String username) throws Exception {
+
+        try{
+            //TODO: validacija za username
+//            if(!VALID_EMAIL_ADDRESS_REGEX.matcher(username).find()){
+//                log.error("Check if 2FA is enabled for account failed. Email invalid");
+//                return new ResponseEntity("Email invalid", HttpStatus.INTERNAL_SERVER_ERROR);
+//            }
+
+            boolean isEnabled2FA = userService.checkIfEnabled2FA(username);
+
+            log.info("Check if 2FA is enabled for account success for username: " + username);
+            return new ResponseEntity(isEnabled2FA, HttpStatus.OK);
+
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @RequestMapping(method = RequestMethod.POST, value = "/login")
     public ResponseEntity<UserTokenStateDTO> login(@RequestBody @Valid JwtAuthenticationDTO authenticationRequest, HttpServletRequest request) {
         Authentication authentication;
@@ -124,9 +150,21 @@ public class AuthController {
 
         User user = (User) authentication.getPrincipal();
         if (!user.getIsActivated()) {
-
             log.error("Failed login. Username: " + authenticationRequest.getEmail() + " , ip address: " + request.getRemoteAddr() + " . Account not activated.");
             return new ResponseEntity("User is not activated", HttpStatus.BAD_REQUEST);
+        }
+        if(user.isUsing2FA()){
+
+            if(authenticationRequest.getCode() == null || !TWO_FACTOR_CODE_REGEX.matcher(user.getEmail()).find()){
+                log.error("Failed login. Two factor code not valid. Ip address: " + request.getRemoteAddr());
+                return new ResponseEntity("Two factor code not valid", HttpStatus.BAD_REQUEST);
+
+            }
+
+            if(!verifier.isValidCode(user.getSecret(), authenticationRequest.getCode())){
+                log.error("Failed login. Two factor code " + authenticationRequest.getCode() + "not valid. Ip address: " + request.getRemoteAddr());
+                return new ResponseEntity("Two factor code not valid", HttpStatus.BAD_REQUEST);
+            }
         }
         Collection<Permission> p = user.getUserType().getPermissions();
         String jwt = tokenUtils.generateToken(user.getUsername(), user.getUserType().getName(), p);
