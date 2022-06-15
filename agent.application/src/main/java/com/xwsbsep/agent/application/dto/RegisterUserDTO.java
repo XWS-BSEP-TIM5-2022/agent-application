@@ -29,4 +29,6 @@ public class RegisterUserDTO {
     private Boolean isActivated;
     private UserType userType;
     private Company company;
+    private boolean using2FA;
+    private String secret;
 }

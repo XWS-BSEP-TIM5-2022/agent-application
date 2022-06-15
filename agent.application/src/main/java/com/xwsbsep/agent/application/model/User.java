@@ -118,6 +118,8 @@ public class User implements UserDetails {
         this.isActivated = u.getIsActivated();
         this.lastPasswordResetDate = u.getLastPasswordResetDate();
         this.userType = u.getUserType();
+        this.secret = u.getSecret();
+        this.using2FA = u.isUsing2FA();
     }
     public User(Long id, String email, String username, String password, Timestamp lastPasswordResetDate, String firstName, String lastName, Boolean isActivated, UserType userType, Company company) {
         this.id = id;
