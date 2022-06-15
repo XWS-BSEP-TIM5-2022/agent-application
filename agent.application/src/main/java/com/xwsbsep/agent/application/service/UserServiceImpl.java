@@ -149,23 +149,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean checkPasswordCriteria(String password, String username) {
-        PasswordValidator validator = new PasswordValidator(Arrays.asList(
-                new LengthRule(8, 100),
-//                new UppercaseCharacterRule(1),
-//                new LowercaseCharacterRule(1),
-//                new DigitCharacterRule(1),
-//                new SpecialCharacterRule(1),
-                new WhitespaceRule()));
-
-        RuleResult result = validator.validate(new PasswordData(password));
-        if (result.isValid()) {
-            if(password.toLowerCase().contains(username.toLowerCase())) {
-                System.out.println("Password must not contain username");
-                return false;
-            }
-            return true;
+        Pattern pattern = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-+_!@#$%^&*.,?:;<>=`~)({}|/])(?=\\S+$).{8,}$");
+        Matcher passMatcher = pattern.matcher(password);
+        if(password.toLowerCase().contains(username.toLowerCase())) {
+            return false;
         }
-        return false;
+        return passMatcher.matches();
     }
 
     @Override
@@ -196,6 +185,9 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userRepository.findByUsername(name);
+        if(dto.getNewPassword().toLowerCase().contains(user.getUsername().toLowerCase())) {
+            throw new Exception("Password must not contain username");
+        }
         if(!user.getIsActivated()){
             throw new Exception("Account is not activated");
         }
@@ -213,11 +205,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean checkPasswordCriteria(String password) {
-//        Pattern pattern = Pattern.compile("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[-+_!@#$%^&*.,?:;<>=`~\\\\]\\x22\\x27\\(\\)\\{\\}\\|\\/\\[\\\\\\\\?]).{8,}$");
         Pattern pattern = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-+_!@#$%^&*.,?:;<>=`~)({}|/])(?=\\S+$).{8,}$");
         Matcher passMatcher = pattern.matcher(password);
-        System.out.println(passMatcher.matches());
-        return passMatcher.matches() /*&& result.isValid()*/;
+        return passMatcher.matches();
     }
 
 }
