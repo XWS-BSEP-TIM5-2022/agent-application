@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Snyk test report</title>
-  <meta name="description" content="6 known vulnerabilities found in 6 vulnerable dependency paths.">
+  <meta name="description" content="7 known vulnerabilities found in 7 vulnerable dependency paths.">
   <base target="_blank">
   <link rel="icon" type="image/png" href="https://res.cloudinary.com/snyk/image/upload/v1468845142/favicon/favicon.png"
     sizes="194x194">
@@ -456,7 +456,7 @@
               <div class="header-wrap">
                   <h1 class="project__header__title">Snyk test report</h1>
     
-                <p class="timestamp">June 14th 2022, 10:13:11 pm</p>
+                <p class="timestamp">June 16th 2022, 2:36:22 pm</p>
               </div>
               <div class="source-panel">
                 <span>Scanned the following path:</span>
@@ -466,9 +466,9 @@
               </div>
     
               <div class="meta-counts">
-                <div class="meta-count"><span>6</span> <span>known vulnerabilities</span></div>
-                <div class="meta-count"><span>6 vulnerable dependency paths</span></div>
-                <div class="meta-count"><span>72</span> <span>dependencies</span></div>
+                <div class="meta-count"><span>7</span> <span>known vulnerabilities</span></div>
+                <div class="meta-count"><span>7 vulnerable dependency paths</span></div>
+                <div class="meta-count"><span>79</span> <span>dependencies</span></div>
               </div><!-- .meta-counts -->
             </div><!-- .layout-container--short -->
           </header><!-- .project__header -->
@@ -858,6 +858,83 @@
         
             <div class="cta card__cta">
                 <p><a href="https://snyk.io/vuln/SNYK-JAVA-LOG4J-2316893">More about this vulnerability</a></p>
+            </div>
+        
+        </div><!-- .card -->
+        <div class="card card--vuln  disclosure--not-new severity--medium" data-snyk-test="medium">
+            <h2 class="card__title">Unsafe Dependency Resolution</h2>
+            <div class="card__section">
+        
+                <div class="label label--medium">
+                    <span class="label__text">medium severity</span>
+                </div>
+        
+                <hr/>
+        
+                <ul class="card__meta">
+                    <li class="card__meta__item">
+                        Package Manager: maven
+                    </li>
+                    <li class="card__meta__item">
+                            Vulnerable module:
+        
+                            com.beust:jcommander
+                    </li>
+        
+                    <li class="card__meta__item">Introduced through:
+        
+        
+                                    com.xws-bsep:agent.application@0.0.1-SNAPSHOT, dev.samstevens.totp:totp-spring-boot-starter@1.7.1 and others
+                    </li>
+                </ul>
+        
+                <hr/>
+        
+        
+                        <h3 class="card__section__title">Detailed paths</h3>
+        
+                    <ul class="card__meta__paths">
+                                <li>
+                                <span class="list-paths__item__introduced"><em>Introduced through</em>:
+                                        com.xws-bsep:agent.application@0.0.1-SNAPSHOT
+                                         <span class="list-paths__item__arrow">›</span> 
+                                        dev.samstevens.totp:totp-spring-boot-starter@1.7.1
+                                         <span class="list-paths__item__arrow">›</span> 
+                                        dev.samstevens.totp:totp@1.7.1
+                                         <span class="list-paths__item__arrow">›</span> 
+                                        com.google.zxing:javase@3.4.0
+                                         <span class="list-paths__item__arrow">›</span> 
+                                        com.beust:jcommander@1.72
+                                        
+                                </span>
+        
+                            </li>
+                    </ul><!-- .list-paths -->
+        
+            </div><!-- .card__section -->
+        
+              <hr/>
+              <!-- Overview -->
+              <h2 id="overview">Overview</h2>
+        <p><a href="https://github.com/cbeust/jcommander">com.beust:jcommander</a> is a Command line parsing framework for Java.</p>
+        <p>Affected versions of this package are vulnerable to Unsafe Dependency Resolution due to resolving dependencies over an insecure channel (http).</p>
+        <p>If the build occurred over an insecure connection, a malicious user could have perform a Man-in-the-Middle attack during the build and alter the build artifacts that were produced.
+        In the case that any of these artifacts were compromised, any developers using them could be vulnerable.</p>
+        <p><strong>Note:</strong> In order to validate that this artifact was not compromised, the maintainer would need to confirm that all of the artifacts published to the registry were not altered. Until this happens, we can not guarantee that this artifact was not compromised even though the probability that this happened is low. </p>
+        <p>We have chosen to alert on this issue when maintainers either decided to issue CVEs themselves, or in cases when maintainers decided against performing audits on their build to verify they had not been compromised.</p>
+        <h2 id="remediation">Remediation</h2>
+        <p>Upgrade <code>com.beust:jcommander</code> to version 1.75 or higher.</p>
+        <h2 id="references">References</h2>
+        <ul>
+        <li><a href="https://github.com/cbeust/jcommander/commit/3ae95595febbed9c13f367b6bda5c0be1c572c53">GitHub Commit</a></li>
+        <li><a href="https://github.com/cbeust/jcommander/issues/465">GitHub Issue</a></li>
+        <li><a href="https://medium.com/@jonathan.leitschuh/1fc329d898fb">Jonathan Leitschuh&#39;s Blog</a></li>
+        </ul>
+        
+              <hr/>
+        
+            <div class="cta card__cta">
+                <p><a href="https://snyk.io/vuln/SNYK-JAVA-COMBEUST-174815">More about this vulnerability</a></p>
             </div>
         
         </div><!-- .card -->
