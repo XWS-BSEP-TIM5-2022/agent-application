@@ -54,6 +54,7 @@ public class CompanyController {
         boolean approved = this.companyRegistrationRequestService.approveRequest(requestId);
         if (approved){
             log.info("Company with id: " + requestId + " successfully activated");
+            log.info("User become COMPANY OWNER!");
             return new ResponseEntity(HttpStatus.OK);
         }
         log.error("Error while approving request for registration company with id: " + requestId);
