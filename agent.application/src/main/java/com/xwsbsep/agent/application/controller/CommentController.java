@@ -37,6 +37,8 @@ public class CommentController {
     public ResponseEntity<?> addCompanyComment(@RequestBody @Valid AddCommentDTO dto, @RequestHeader("Authorization") String jwtToken) throws Exception {
 
         String username = tokenUtils.getUsernameFromToken(jwtToken.split(WHITESPACE)[1]);
+        username = username.replaceAll("[\n\r\t]", "_");
+
         try {
             commentService.addComment(dto);
             log.info("Company with id: " + dto.getCompanyId() + " successfully commented by user: " + username);
@@ -69,6 +71,7 @@ public class CommentController {
     public ResponseEntity<?> addSalaryComment(@RequestBody @Valid AddSalaryCommentDTO reqDto, @RequestHeader("Authorization") String jwtToken) throws Exception {
 
         String username = tokenUtils.getUsernameFromToken(jwtToken.split(WHITESPACE)[1]);
+        username = username.replaceAll("[\n\r\t]", "_");
 
         try {
             CommentSalary comment = new CommentSalaryMapper().mapAddCommentDtoToComment(reqDto);
@@ -94,6 +97,8 @@ public class CommentController {
     public ResponseEntity<?> addInterviewComment(@RequestBody @Valid AddInterviewCommentDTO reqDto, @RequestHeader("Authorization") String jwtToken) throws Exception {
 
         String username = tokenUtils.getUsernameFromToken(jwtToken.split(WHITESPACE)[1]);
+        username = username.replaceAll("[\n\r\t]", "_");
+
         try {
             commentService.addCommentInterview(reqDto);
             log.info("Interview for company with id: " + reqDto.getCompanyId() + " successfully commented by user: " + username);
