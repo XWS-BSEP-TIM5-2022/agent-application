@@ -129,7 +129,7 @@ public class TokenUtils {
      * @return Korisničko ime iz tokena ili null ukoliko ne postoji.
      */
     public String getUsernameFromToken(String token) {
-        String username;
+        String username = null;
 
         try {
             final Claims claims = this.getAllClaimsFromToken(token);
@@ -151,7 +151,7 @@ public class TokenUtils {
      * @return Datum kada je token kreiran.
      */
     public Date getIssuedAtDateFromToken(String token) {
-        Date issueAt;
+        Date issueAt = null;
         try {
             final Claims claims = this.getAllClaimsFromToken(token);
             if(claims != null){
@@ -172,7 +172,7 @@ public class TokenUtils {
      * @return Tip uredjaja.
      */
     public String getAudienceFromToken(String token) {
-        String audience;
+        String audience = null;
         try {
             final Claims claims = this.getAllClaimsFromToken(token);
             if(claims != null){
@@ -193,7 +193,7 @@ public class TokenUtils {
      * @return Datum do kojeg token važi.
      */
     public Date getExpirationDateFromToken(String token) {
-        Date expiration;
+        Date expiration = null;
         try {
             final Claims claims = this.getAllClaimsFromToken(token);
             if(claims != null){
