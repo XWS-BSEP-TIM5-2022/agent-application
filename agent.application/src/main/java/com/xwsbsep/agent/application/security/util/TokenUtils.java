@@ -133,7 +133,9 @@ public class TokenUtils {
 
         try {
             final Claims claims = this.getAllClaimsFromToken(token);
-            username = claims.getSubject();
+            if(claims != null){
+                username = claims.getSubject();
+            }
         } catch (NullPointerException ex) {
             throw ex;
         } catch (Exception e) {
@@ -152,7 +154,9 @@ public class TokenUtils {
         Date issueAt;
         try {
             final Claims claims = this.getAllClaimsFromToken(token);
-            issueAt = claims.getIssuedAt();
+            if(claims != null){
+                issueAt = claims.getIssuedAt();
+            }
         } catch (NullPointerException ex) {
             throw ex;
         } catch (Exception e) {
@@ -171,7 +175,9 @@ public class TokenUtils {
         String audience;
         try {
             final Claims claims = this.getAllClaimsFromToken(token);
-            audience = claims.getAudience();
+            if(claims != null){
+                audience = claims.getAudience();
+            }
         } catch (NullPointerException ex) {
             throw ex;
         } catch (Exception e) {
@@ -190,7 +196,9 @@ public class TokenUtils {
         Date expiration;
         try {
             final Claims claims = this.getAllClaimsFromToken(token);
-            expiration = claims.getExpiration();
+            if(claims != null){
+                expiration = claims.getExpiration();
+            }
         } catch (NullPointerException ex) {
             throw ex;
         } catch (Exception e) {
