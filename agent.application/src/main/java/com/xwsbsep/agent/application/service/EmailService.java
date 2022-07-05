@@ -39,7 +39,8 @@ public class EmailService {
             helper.setSubject("Agent application - Account activation");
             helper.setFrom(env.getProperty("spring.mail.username"));
             helper.setTo(emailTo);
-            helper.setText(accountActivationMessage(token), true);
+//            helper.setText(accountActivationMessage(token), true);
+            helper.setText("https://localhost:" + env.getProperty("server.port") + "/auth/activateAccount?token=" + token, false);
             javaMailSender.send(message);
             return true;
         } catch (Exception e) {
@@ -91,7 +92,8 @@ public class EmailService {
                 "                                    <td bgcolor=\"#ffffff\" align=\"center\" style=\"padding: 20px 30px 60px 30px;\">\n" +
                 "                                        <table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n" +
                 "                                            <tr>\n" +
-                "                                                <td align=\"center\" style=\"border-radius: 3px;\" bgcolor=\"#3273a8\"><a href=\"" + url + "\" target=\"_blank\" style=\"font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3273a8; display: inline-block;\">Activate Account</a></td>\n" +
+                "                                                <td align=\"center\" style=\"border-radius: 3px;\" bgcolor=\"#3273a8\">" +
+                "                                                   <a href=\"" + url + "\" target=\"_blank\" style=\"font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3273a8; display: inline-block;\">Activate Account</a></td>\n" +
                 "                                            </tr>\n" +
                 "                                        </table>\n" +
                 "                                    </td>\n" +
