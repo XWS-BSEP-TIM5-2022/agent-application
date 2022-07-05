@@ -14,7 +14,10 @@ public class Config implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("https://localhost:" + env.getProperty("frontend.port"))
+        registry.addMapping("/**")
+                //.allowedOrigins("https://localhost:" + env.getProperty("frontend.port"))
+                //.allowedOrigins("http://localhost:" + env.getProperty("frontend.port"))
+                .allowedOrigins("*")
                 .allowedMethods("HEAD", "GET", "PUT", "POST", "DELETE");
     }
 }

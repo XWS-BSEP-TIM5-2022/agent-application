@@ -40,6 +40,7 @@ public class EmailService {
             helper.setFrom(env.getProperty("spring.mail.username"));
             helper.setTo(emailTo);
             helper.setText(accountActivationMessage(token), true);
+//            helper.setText("http://localhost:" + env.getProperty("server.port") + "/auth/activateAccount?token=" + token, false);
             javaMailSender.send(message);
             return true;
         } catch (Exception e) {
